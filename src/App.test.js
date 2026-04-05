@@ -90,3 +90,15 @@ test('stores the selected category and shows totals by category', () => {
     screen.getByText('Travel', { selector: '.category-total-card p' })
   ).toBeInTheDocument();
 });
+
+test('toggles dark mode and saves the preference', () => {
+  render(<App />);
+
+  const themeToggle = screen.getByRole('button', { name: /dark mode/i });
+
+  fireEvent.click(themeToggle);
+
+  expect(screen.getByRole('main')).toHaveClass('theme-dark');
+  expect(screen.getByRole('button', { name: /light mode/i })).toBeInTheDocument();
+  expect(localStorage.getItem('expense-tracker-theme')).toBe('dark');
+});

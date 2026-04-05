@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A simple React expense tracker built with functional components and hooks. The app lets users add, edit, and delete expenses, assign categories, view the full list, see the running total, and persist data with `localStorage`.
+A simple React expense tracker built with functional components and hooks. The app lets users add, edit, and delete expenses, assign categories, switch between light and dark mode, view the full list, see the running total, and persist data with `localStorage`.
 
 ## Features
 
@@ -10,6 +10,7 @@ A simple React expense tracker built with functional components and hooks. The a
 - Delete any expense from the list
 - View the total expense amount
 - View totals grouped by category
+- Toggle between light and dark mode with saved theme preference
 - Save and load expenses with `localStorage`
 - Use unique IDs for each expense
 

@@ -1,9 +1,68 @@
 .app-shell {
+  --bg-top: rgba(62, 146, 204, 0.18);
+  --bg-start: #f3f7fb;
+  --bg-end: #edf2f7;
+  --surface-bg: #ffffff;
+  --surface-alt: #f9fbfd;
+  --surface-border: #dbe5ee;
+  --card-shadow: 0 18px 45px rgba(19, 47, 76, 0.12);
+  --text-primary: #12263a;
+  --text-secondary: #24384a;
+  --text-muted: #5c6e80;
+  --eyebrow-color: #3e6c8c;
+  --summary-start: #12263a;
+  --summary-end: #1e3c58;
+  --summary-text: #ffffff;
+  --input-border: #cad6e2;
+  --input-bg: #ffffff;
+  --focus-ring: rgba(62, 146, 204, 0.16);
+  --primary-bg: #3e92cc;
+  --primary-text: #ffffff;
+  --secondary-bg: #e8f2f8;
+  --secondary-text: #1e567c;
+  --danger-bg: #ffe5df;
+  --danger-text: #9f2f16;
+  --pill-bg: #e8f2f8;
+  --pill-text: #1e567c;
+  --editing-border: #8dbfe3;
+  --editing-shadow: 0 10px 24px rgba(62, 146, 204, 0.12);
   min-height: 100vh;
   padding: 32px 16px;
   background:
-    radial-gradient(circle at top, rgba(62, 146, 204, 0.18), transparent 32%),
-    linear-gradient(180deg, #f3f7fb 0%, #edf2f7 100%);
+    radial-gradient(circle at top, var(--bg-top), transparent 32%),
+    linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  color: var(--text-primary);
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+.app-shell.theme-dark {
+  --bg-top: rgba(124, 199, 255, 0.22);
+  --bg-start: #08111d;
+  --bg-end: #0f1a29;
+  --surface-bg: rgba(14, 22, 34, 0.94);
+  --surface-alt: #111c2b;
+  --surface-border: #22344a;
+  --card-shadow: 0 18px 45px rgba(0, 0, 0, 0.42);
+  --text-primary: #e7eef7;
+  --text-secondary: #d4deea;
+  --text-muted: #97a9bd;
+  --eyebrow-color: #7cc7ff;
+  --summary-start: #183650;
+  --summary-end: #102437;
+  --summary-text: #f5fbff;
+  --input-border: #32485f;
+  --input-bg: #0d1724;
+  --focus-ring: rgba(124, 199, 255, 0.22);
+  --primary-bg: #7cc7ff;
+  --primary-text: #082133;
+  --secondary-bg: #183149;
+  --secondary-text: #d7ecfa;
+  --danger-bg: #4a2221;
+  --danger-text: #ffb7aa;
+  --pill-bg: #143149;
+  --pill-text: #96daff;
+  --editing-border: #5db4e7;
+  --editing-shadow: 0 12px 28px rgba(6, 18, 31, 0.45);
 }
 
 .expense-card {
@@ -11,34 +70,65 @@
   margin: 0 auto;
   padding: 32px;
   border-radius: 24px;
-  background-color: #ffffff;
-  box-shadow: 0 18px 45px rgba(19, 47, 76, 0.12);
+  border: 1px solid var(--surface-border);
+  background-color: var(--surface-bg);
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
 .app-header {
   margin-bottom: 24px;
 }
 
+.app-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .eyebrow {
   margin: 0 0 8px;
-  color: #3e6c8c;
+  color: var(--eyebrow-color);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  transition: color 0.35s ease;
 }
 
 .app-header h1 {
   margin: 0;
-  color: #12263a;
+  color: var(--text-primary);
   font-size: clamp(2rem, 3vw, 2.6rem);
+  transition: color 0.35s ease;
 }
 
 .app-description {
   max-width: 540px;
   margin: 12px 0 0;
-  color: #526273;
+  color: var(--text-muted);
   line-height: 1.6;
+  transition: color 0.35s ease;
+}
+
+.theme-toggle {
+  padding: 12px 18px;
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.35s ease,
+    color 0.35s ease, border-color 0.35s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(19, 47, 76, 0.12);
 }
 
 .summary-panel {
@@ -49,8 +139,13 @@
   margin-bottom: 24px;
   padding: 18px 20px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #12263a 0%, #1e3c58 100%);
-  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--summary-start) 0%,
+    var(--summary-end) 100%
+  );
+  color: var(--summary-text);
+  transition: background 0.35s ease, color 0.35s ease;
 }
 
 .summary-panel span {
@@ -74,28 +169,32 @@
 
 .category-total-card {
   padding: 16px 18px;
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--surface-border);
   border-radius: 18px;
-  background-color: #f9fbfd;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .category-total-card p {
   margin: 0 0 8px;
-  color: #5c6e80;
+  color: var(--text-muted);
   font-size: 0.92rem;
+  transition: color 0.35s ease;
 }
 
 .category-total-card strong {
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1.05rem;
+  transition: color 0.35s ease;
 }
 
 .expense-form {
   margin-bottom: 28px;
   padding: 20px;
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--surface-border);
   border-radius: 20px;
-  background-color: #f9fbfd;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .form-heading {
@@ -104,14 +203,16 @@
 
 .form-heading h2 {
   margin: 0;
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1.2rem;
+  transition: color 0.35s ease;
 }
 
 .form-heading p {
   margin: 8px 0 0;
-  color: #5c6e80;
+  color: var(--text-muted);
   line-height: 1.5;
+  transition: color 0.35s ease;
 }
 
 .form-grid {
@@ -124,8 +225,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #24384a;
+  color: var(--text-secondary);
   font-weight: 600;
+  transition: color 0.35s ease;
 }
 
 .form-field span {
@@ -135,25 +237,28 @@
 .form-field input,
 .form-field select {
   padding: 14px 16px;
-  border: 1px solid #cad6e2;
+  border: 1px solid var(--input-border);
   border-radius: 14px;
-  background-color: #ffffff;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
 }
 
 .form-field input:focus,
 .form-field select:focus {
   outline: none;
-  border-color: #3e92cc;
-  box-shadow: 0 0 0 4px rgba(62, 146, 204, 0.16);
+  border-color: var(--primary-bg);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .form-error {
   margin: 12px 0 0;
-  color: #c73e1d;
+  color: var(--danger-text);
   font-size: 0.92rem;
   font-weight: 600;
+  transition: color 0.35s ease;
 }
 
 .primary-button,
@@ -185,15 +290,19 @@
 
 .primary-button {
   padding: 12px 22px;
-  background-color: #3e92cc;
-  color: #ffffff;
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  transition: transform 0.2s ease, opacity 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
 }
 
 .secondary-button,
 .edit-button {
   padding: 12px 22px;
-  background-color: #e8f2f8;
-  color: #1e567c;
+  background-color: var(--secondary-bg);
+  color: var(--secondary-text);
+  transition: transform 0.2s ease, opacity 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
 }
 
 .expense-list-section {
@@ -210,13 +319,15 @@
 
 .list-header h2 {
   margin: 0;
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1.25rem;
+  transition: color 0.35s ease;
 }
 
 .list-header span {
-  color: #5c6e80;
+  color: var(--text-muted);
   font-size: 0.95rem;
+  transition: color 0.35s ease;
 }
 
 .expense-list {
@@ -234,20 +345,23 @@
   justify-content: space-between;
   gap: 16px;
   padding: 18px 20px;
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--surface-border);
   border-radius: 18px;
-  background-color: #ffffff;
+  background-color: var(--surface-bg);
+  transition: background-color 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
 .expense-item-editing {
-  border-color: #8dbfe3;
-  box-shadow: 0 10px 24px rgba(62, 146, 204, 0.12);
+  border-color: var(--editing-border);
+  box-shadow: var(--editing-shadow);
 }
 
 .expense-item h3 {
   margin: 0 0 6px;
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: color 0.35s ease;
 }
 
 .expense-content {
@@ -267,16 +381,18 @@
   align-items: center;
   padding: 6px 10px;
   border-radius: 999px;
-  background-color: #e8f2f8;
-  color: #1e567c;
+  background-color: var(--pill-bg);
+  color: var(--pill-text);
   font-size: 0.82rem;
   font-weight: 700;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 .expense-meta {
   margin: 0;
-  color: #688095;
+  color: var(--text-muted);
   font-size: 0.9rem;
+  transition: color 0.35s ease;
 }
 
 .expense-actions {
@@ -291,33 +407,39 @@
 }
 
 .expense-actions strong {
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: color 0.35s ease;
 }
 
 .delete-button {
   padding: 10px 16px;
-  background-color: #ffe5df;
-  color: #9f2f16;
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  transition: transform 0.2s ease, opacity 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
 }
 
 .empty-state {
   padding: 28px 20px;
-  border: 1px dashed #cad6e2;
+  border: 1px dashed var(--surface-border);
   border-radius: 20px;
   text-align: center;
-  background-color: #f9fbfd;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .empty-state h2 {
   margin: 0;
-  color: #12263a;
+  color: var(--text-primary);
   font-size: 1.2rem;
+  transition: color 0.35s ease;
 }
 
 .empty-state p {
   margin: 10px 0 0;
-  color: #5c6e80;
+  color: var(--text-muted);
+  transition: color 0.35s ease;
 }
 
 @media (max-width: 640px) {
@@ -329,6 +451,7 @@
     grid-template-columns: 1fr;
   }
 
+  .app-header-top,
   .summary-panel,
   .expense-item,
   .expense-actions,

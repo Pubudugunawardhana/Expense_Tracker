@@ -5,6 +5,7 @@ import { DEFAULT_CATEGORY } from './data/expenseCategories';
 import './App.css';
 
 const STORAGE_KEY = 'expense-tracker-expenses';
+const THEME_STORAGE_KEY = 'expense-tracker-theme';
 
 const normalizeExpense = (expense) => {
   const numericAmount = Number(expense.amount);
@@ -21,6 +22,16 @@ function App() {
   const [expenses, setExpenses] = useState([]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem(THEME_STORAGE_KEY) === 'dark'
+        ? 'dark'
+        : 'light';
+    } catch (error) {
+      console.error('Failed to load theme preference from localStorage.', error);
+      return 'light';
+    }
+  });
 
   useEffect(() => {
     try {
@@ -47,6 +58,14 @@ function App() {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
   }, [expenses, hasLoaded]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (error) {
+      console.error('Failed to save theme preference to localStorage.', error);
+    }
+  }, [theme]);
 
   const handleSaveExpense = (expenseToSave) => {
     setExpenses((currentExpenses) => {
@@ -81,6 +100,12 @@ function App() {
     setEditingExpense(selectedExpense ?? null);
   };
 
+  const handleToggleTheme = () => {
+    setTheme((currentTheme) =>
+      currentTheme === 'light' ? 'dark' : 'light'
+    );
+  };
+
   const totalExpenseAmount = expenses.reduce(
     (total, expense) => total + expense.amount,
     0
@@ -94,11 +119,26 @@ function App() {
   );
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell theme-${theme}`}>
       <section className="expense-card">
         <div className="app-header">
-          <p className="eyebrow">Personal Finance</p>
-          <h1>Expense Tracker</h1>
+          <div className="app-header-top">
+            <div>
+              <p className="eyebrow">Personal Finance</p>
+              <h1>Expense Tracker</h1>
+            </div>
+
+            <button
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              aria-pressed={theme === 'dark'}
+              className="theme-toggle"
+              type="button"
+              onClick={handleToggleTheme}
+            >
+              {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+            </button>
+          </div>
+
           <p className="app-description">
             Track daily spending, keep your list organized, and see your total
             at a glance.
