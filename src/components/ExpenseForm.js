@@ -11,7 +11,7 @@ const createExpenseId = () => {
   return `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 };
 
-function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense }) {
+function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading = true }) {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
@@ -68,14 +68,16 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense }) {
 
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
-      <div className="form-heading">
-        <h2>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</h2>
-        <p>
-          {editingExpense
-            ? 'Update the title and amount, then save your changes.'
-            : 'Add a title and amount to keep track of your spending.'}
-        </p>
-      </div>
+      {showHeading ? (
+        <div className="form-heading">
+          <h2>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</h2>
+          <p>
+            {editingExpense
+              ? 'Update the title and amount, then save your changes.'
+              : 'Add a title and amount to keep track of your spending.'}
+          </p>
+        </div>
+      ) : null}
 
       <div className="form-grid">
         <label className="form-field" htmlFor="expense-title">

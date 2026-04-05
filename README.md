@@ -1,18 +1,18 @@
 # Expense Tracker
 
-A simple React expense tracker built with functional components and hooks. The app lets users add, edit, and delete expenses, assign categories, switch between light and dark mode, view the full list, see the running total, and persist data with `localStorage`.
+A React expense tracker built with functional components, hooks, and React Router. The app lets users browse their expense list on a home page, add or edit expenses on a dedicated form page, review totals on a summary page, and persist both data and theme preference with `localStorage`.
 
 ## Features
 
-- Add a new expense with a title, amount, and category
-- Edit an existing expense without changing its unique ID
+- Multi-page navigation with React Router
+- Home page for viewing and editing expenses
+- Add Expense page for creating or updating expenses
+- Summary page for total spending and category breakdowns
+- Navbar with links between all pages
+- Dark mode toggle with saved theme preference
+- Add, edit, and delete expenses with unique IDs
 - Validate that the title is not empty and the amount is greater than 0
-- Delete any expense from the list
-- View the total expense amount
-- View totals grouped by category
-- Toggle between light and dark mode with saved theme preference
 - Save and load expenses with `localStorage`
-- Use unique IDs for each expense
 
 ## File Structure
 
@@ -22,8 +22,13 @@ src/
 |   |-- ExpenseForm.js
 |   |-- ExpenseItem.js
 |   |-- ExpenseList.js
+|   |-- Navbar.js
 |-- data/
 |   |-- expenseCategories.js
+|-- pages/
+|   |-- AddExpensePage.js
+|   |-- HomePage.js
+|   |-- SummaryPage.js
 |-- App.css
 |-- App.js
 |-- App.test.js

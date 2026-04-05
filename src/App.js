@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import ExpenseForm from './components/ExpenseForm';
-import ExpenseList from './components/ExpenseList';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import AddExpensePage from './pages/AddExpensePage';
+import HomePage from './pages/HomePage';
+import SummaryPage from './pages/SummaryPage';
 import { DEFAULT_CATEGORY } from './data/expenseCategories';
 import './App.css';
 
@@ -19,6 +22,7 @@ const normalizeExpense = (expense) => {
 };
 
 function App() {
+  const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
@@ -83,6 +87,7 @@ function App() {
     });
 
     setEditingExpense(null);
+    navigate('/');
   };
 
   const handleDeleteExpense = (expenseId) => {
@@ -97,7 +102,22 @@ function App() {
 
   const handleEditExpense = (expenseId) => {
     const selectedExpense = expenses.find((expense) => expense.id === expenseId);
-    setEditingExpense(selectedExpense ?? null);
+
+    if (!selectedExpense) {
+      return;
+    }
+
+    setEditingExpense(selectedExpense);
+    navigate('/add');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingExpense(null);
+    navigate('/');
+  };
+
+  const handleResetEditing = () => {
+    setEditingExpense(null);
   };
 
   const handleToggleTheme = () => {
@@ -140,45 +160,47 @@ function App() {
           </div>
 
           <p className="app-description">
-            Track daily spending, keep your list organized, and see your total
-            at a glance.
+            Track daily spending, move between pages quickly, and keep your totals in view.
           </p>
         </div>
 
-        <div className="summary-panel">
-          <span>Total Expenses</span>
-          <strong>${totalExpenseAmount.toFixed(2)}</strong>
+        <Navbar onNavigate={handleResetEditing} />
+
+        <div className="page-content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  editingExpenseId={editingExpense?.id ?? null}
+                  expenses={expenses}
+                  onDeleteExpense={handleDeleteExpense}
+                  onEditExpense={handleEditExpense}
+                />
+              }
+            />
+            <Route
+              path="/add"
+              element={
+                <AddExpensePage
+                  editingExpense={editingExpense}
+                  onCancelEdit={handleCancelEdit}
+                  onSaveExpense={handleSaveExpense}
+                />
+              }
+            />
+            <Route
+              path="/summary"
+              element={
+                <SummaryPage
+                  categorySummary={categorySummary}
+                  totalExpenseAmount={totalExpenseAmount}
+                />
+              }
+            />
+            <Route path="*" element={<Navigate replace to="/" />} />
+          </Routes>
         </div>
-
-        {categorySummary.length > 0 ? (
-          <section className="category-summary">
-            <div className="list-header">
-              <h2>Totals by Category</h2>
-              <span>{categorySummary.length} categories</span>
-            </div>
-
-            <div className="category-total-grid">
-              {categorySummary.map(([category, total]) => (
-                <article className="category-total-card" key={category}>
-                  <p>{category}</p>
-                  <strong>${total.toFixed(2)}</strong>
-                </article>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        <ExpenseForm
-          editingExpense={editingExpense}
-          onCancelEdit={() => setEditingExpense(null)}
-          onSaveExpense={handleSaveExpense}
-        />
-        <ExpenseList
-          editingExpenseId={editingExpense?.id ?? null}
-          expenses={expenses}
-          onDeleteExpense={handleDeleteExpense}
-          onEditExpense={handleEditExpense}
-        />
       </section>
     </main>
   );

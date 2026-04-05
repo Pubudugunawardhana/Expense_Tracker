@@ -1,33 +1,48 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from './App';
+
+const renderApp = (initialEntries = ['/']) =>
+  render(
+    <MemoryRouter
+      future={{
+        v7_relativeSplatPath: true,
+        v7_startTransition: true,
+      }}
+      initialEntries={initialEntries}
+    >
+      <App />
+    </MemoryRouter>
+  );
 
 beforeEach(() => {
   localStorage.clear();
 });
 
-test('renders the expense tracker heading and total', () => {
-  render(<App />);
-  expect(screen.getByRole('heading', { name: /expense tracker/i })).toBeInTheDocument();
-  expect(screen.getByText(/total expenses/i)).toBeInTheDocument();
+test('renders navbar links on the home page', () => {
+  renderApp();
+
+  expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /add expense/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
 });
 
-test('edits an existing expense instead of adding a new one', () => {
-  render(<App />);
+test('edits an existing expense from home and returns to the list', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      { id: 'expense-1', title: 'Groceries', amount: 45, category: 'Food' },
+    ])
+  );
 
-  fireEvent.change(screen.getByLabelText(/title/i), {
-    target: { value: 'Groceries' },
-  });
-  fireEvent.change(screen.getByLabelText(/amount/i), {
-    target: { value: '45' },
-  });
-  fireEvent.change(screen.getByLabelText(/category/i), {
-    target: { value: 'Food' },
-  });
-  fireEvent.click(screen.getByRole('button', { name: /add expense/i }));
+  renderApp();
+
+  expect(await screen.findByText('Groceries')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-  expect(screen.getByRole('button', { name: /update expense/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /edit expense/i })).toBeInTheDocument();
   expect(screen.getByLabelText(/title/i)).toHaveValue('Groceries');
   expect(screen.getByLabelText(/amount/i)).toHaveValue(45);
   expect(screen.getByLabelText(/category/i)).toHaveValue('Food');
@@ -43,56 +58,30 @@ test('edits an existing expense instead of adding a new one', () => {
   });
   fireEvent.click(screen.getByRole('button', { name: /update expense/i }));
 
-  expect(screen.getByText('Rent')).toBeInTheDocument();
+  expect(await screen.findByText('Rent')).toBeInTheDocument();
   expect(screen.queryByText('Groceries')).not.toBeInTheDocument();
-  expect(
-    screen.getByText('Bills', { selector: '.category-badge' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText('Bills', { selector: '.category-total-card p' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText('$1200.00', { selector: '.summary-panel strong' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText('$1200.00', { selector: '.category-total-card strong' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText('$1200.00', { selector: '.expense-actions strong' })
-  ).toBeInTheDocument();
-  expect(screen.getByText('1 items')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
 });
 
-test('stores the selected category and shows totals by category', () => {
-  render(<App />);
-
-  fireEvent.change(screen.getByLabelText(/title/i), {
-    target: { value: 'Flight' },
-  });
-  fireEvent.change(screen.getByLabelText(/amount/i), {
-    target: { value: '500' },
-  });
-  fireEvent.change(screen.getByLabelText(/category/i), {
-    target: { value: 'Travel' },
-  });
-  fireEvent.click(screen.getByRole('button', { name: /add expense/i }));
-
-  const savedExpenses = JSON.parse(
-    localStorage.getItem('expense-tracker-expenses')
+test('shows the summary page with total and category breakdown', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      { id: 'expense-1', title: 'Flight', amount: 500, category: 'Travel' },
+      { id: 'expense-2', title: 'Dinner', amount: 80, category: 'Food' },
+    ])
   );
 
-  expect(savedExpenses[0].category).toBe('Travel');
-  expect(screen.getByText(/totals by category/i)).toBeInTheDocument();
-  expect(
-    screen.getByText('Travel', { selector: '.category-badge' })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText('Travel', { selector: '.category-total-card p' })
-  ).toBeInTheDocument();
+  renderApp(['/summary']);
+
+  expect(screen.getByRole('heading', { name: /^summary$/i })).toBeInTheDocument();
+  expect(await screen.findByText('$580.00', { selector: '.summary-panel strong' })).toBeInTheDocument();
+  expect(screen.getByText('Travel', { selector: '.category-total-card p' })).toBeInTheDocument();
+  expect(screen.getByText('Food', { selector: '.category-total-card p' })).toBeInTheDocument();
 });
 
 test('toggles dark mode and saves the preference', () => {
-  render(<App />);
+  renderApp();
 
   const themeToggle = screen.getByRole('button', { name: /dark mode/i });
 

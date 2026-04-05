@@ -66,7 +66,7 @@
 }
 
 .expense-card {
-  max-width: 760px;
+  max-width: 920px;
   margin: 0 auto;
   padding: 32px;
   border-radius: 24px;
@@ -106,7 +106,7 @@
 }
 
 .app-description {
-  max-width: 540px;
+  max-width: 620px;
   margin: 12px 0 0;
   color: var(--text-muted);
   line-height: 1.6;
@@ -131,12 +131,70 @@
   box-shadow: 0 10px 24px rgba(19, 47, 76, 0.12);
 }
 
+.app-navbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 10px;
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 16px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 700;
+  transition: background-color 0.25s ease, color 0.25s ease,
+    transform 0.2s ease;
+}
+
+.nav-link:hover {
+  transform: translateY(-1px);
+}
+
+.nav-link-active {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+}
+
+.page-content {
+  min-height: 420px;
+}
+
+.page-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.page-intro h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.45rem;
+  transition: color 0.35s ease;
+}
+
+.page-intro p {
+  margin: 10px 0 0;
+  max-width: 620px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  transition: color 0.35s ease;
+}
+
 .summary-panel {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
   padding: 18px 20px;
   border-radius: 18px;
   background: linear-gradient(
@@ -158,12 +216,12 @@
 }
 
 .category-summary {
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 
 .category-total-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 14px;
 }
 
@@ -189,7 +247,7 @@
 }
 
 .expense-form {
-  margin-bottom: 28px;
+  margin-bottom: 0;
   padding: 20px;
   border: 1px solid var(--surface-border);
   border-radius: 20px;
@@ -306,7 +364,7 @@
 }
 
 .expense-list-section {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
 .list-header {
@@ -459,6 +517,14 @@
   .list-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .app-navbar {
+    flex-direction: column;
+  }
+
+  .nav-link {
+    width: 100%;
   }
 
   .expense-actions {
