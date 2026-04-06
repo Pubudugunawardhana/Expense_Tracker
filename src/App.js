@@ -10,6 +10,7 @@ import './App.css';
 
 const STORAGE_KEY = 'expense-tracker-expenses';
 const THEME_STORAGE_KEY = 'expense-tracker-theme';
+const BUDGET_STORAGE_KEY = 'expense-tracker-budget';
 
 const normalizeExpense = (expense) => {
   const numericAmount = Number(expense.amount);
@@ -23,11 +24,24 @@ const normalizeExpense = (expense) => {
   };
 };
 
+const getInitialBudget = () => {
+  try {
+    const savedBudget = localStorage.getItem(BUDGET_STORAGE_KEY);
+    const parsedBudget = Number(savedBudget);
+
+    return Number.isFinite(parsedBudget) && parsedBudget >= 0 ? parsedBudget : 0;
+  } catch (error) {
+    console.error('Failed to load budget from localStorage.', error);
+    return 0;
+  }
+};
+
 function App() {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  const [budget, setBudget] = useState(getInitialBudget);
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem(THEME_STORAGE_KEY) === 'dark'
@@ -64,6 +78,14 @@ function App() {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
   }, [expenses, hasLoaded]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(BUDGET_STORAGE_KEY, budget.toString());
+    } catch (error) {
+      console.error('Failed to save budget to localStorage.', error);
+    }
+  }, [budget]);
 
   useEffect(() => {
     try {
@@ -130,6 +152,10 @@ function App() {
     );
   };
 
+  const handleBudgetChange = (nextBudget) => {
+    setBudget(Number.isFinite(nextBudget) && nextBudget >= 0 ? nextBudget : 0);
+  };
+
   const totalExpenseAmount = expenses.reduce(
     (total, expense) => total + expense.amount,
     0
@@ -164,7 +190,8 @@ function App() {
           </div>
 
           <p className="app-description">
-            Track daily spending, compare trends over time, and keep your totals in view.
+            Track daily spending, manage a budget target, compare trends over time,
+            and keep your totals in view.
           </p>
         </div>
 
@@ -176,10 +203,13 @@ function App() {
               path="/"
               element={
                 <HomePage
+                  budget={budget}
                   editingExpenseId={editingExpense?.id ?? null}
                   expenses={expenses}
+                  onBudgetChange={handleBudgetChange}
                   onDeleteExpense={handleDeleteExpense}
                   onEditExpense={handleEditExpense}
+                  totalExpenseAmount={totalExpenseAmount}
                 />
               }
             />

@@ -38,6 +38,8 @@
   --chart-pie-3: #f4a259;
   --chart-pie-4: #8b5cf6;
   --chart-pie-5: #ef6f6c;
+  --budget-fill: #2c9f84;
+  --budget-fill-over: #ef6f6c;
   min-height: 100vh;
   padding: 32px 16px;
   background:
@@ -87,6 +89,8 @@
   --chart-pie-3: #f7b267;
   --chart-pie-4: #b28dff;
   --chart-pie-5: #ff9f8f;
+  --budget-fill: #55d2ae;
+  --budget-fill-over: #ff9f8f;
 }
 
 .expense-card {
@@ -237,6 +241,137 @@
 
 .summary-panel strong {
   font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+
+.budget-panel {
+  padding: 22px;
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.budget-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.budget-panel-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  transition: color 0.35s ease;
+}
+
+.budget-panel-header p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+  transition: color 0.35s ease;
+}
+
+.budget-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: color 0.35s ease;
+}
+
+.budget-input-group span {
+  font-size: 0.92rem;
+}
+
+.budget-input-group input {
+  padding: 14px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
+}
+
+.budget-input-group input:focus {
+  outline: none;
+  border-color: var(--primary-bg);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.budget-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.budget-metric-card {
+  padding: 16px 18px;
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background-color: var(--surface-bg);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.budget-metric-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  transition: color 0.35s ease;
+}
+
+.budget-metric-card strong {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  transition: color 0.35s ease;
+}
+
+.budget-positive {
+  color: var(--chart-area) !important;
+}
+
+.budget-negative {
+  color: var(--danger-text) !important;
+}
+
+.budget-progress {
+  margin-top: 18px;
+}
+
+.budget-progress-track {
+  overflow: hidden;
+  height: 12px;
+  border-radius: 999px;
+  background-color: rgba(62, 146, 204, 0.12);
+}
+
+.app-shell.theme-dark .budget-progress-track {
+  background-color: rgba(124, 199, 255, 0.12);
+}
+
+.budget-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--budget-fill), var(--chart-line));
+  transition: width 0.25s ease;
+}
+
+.budget-progress-fill-over {
+  background: linear-gradient(90deg, var(--budget-fill-over), var(--danger-text));
+}
+
+.budget-progress p {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  transition: color 0.35s ease;
 }
 
 .category-summary {
@@ -613,7 +748,8 @@
 }
 
 @media (max-width: 860px) {
-  .form-grid-extended {
+  .form-grid-extended,
+  .budget-metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -628,7 +764,8 @@
   }
 
   .form-grid,
-  .form-grid-extended {
+  .form-grid-extended,
+  .budget-metric-grid {
     grid-template-columns: 1fr;
   }
 
@@ -638,9 +775,15 @@
   .expense-actions,
   .expense-button-group,
   .list-header,
-  .chart-card-header {
+  .chart-card-header,
+  .budget-panel-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .budget-input-group {
+    width: 100%;
+    min-width: 0;
   }
 
   .app-navbar {

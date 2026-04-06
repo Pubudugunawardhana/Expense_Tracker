@@ -29,13 +29,27 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-test('renders navbar links on the home page', () => {
+test('renders navbar links and budget panel on the home page', () => {
   renderApp();
 
   expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /add expense/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
+});
+
+test('updates the budget and saves it to localStorage', () => {
+  renderApp();
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '1500' },
+  });
+
+  expect(screen.getByDisplayValue(1500)).toBeInTheDocument();
+  expect(screen.getByText('Current Budget')).toBeInTheDocument();
+  expect(screen.getByText('Remaining')).toBeInTheDocument();
+  expect(localStorage.getItem('expense-tracker-budget')).toBe('1500');
 });
 
 test('edits an existing expense from home and returns to the list', async () => {

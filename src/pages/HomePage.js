@@ -1,12 +1,30 @@
+import BudgetPanel from '../components/BudgetPanel';
 import ExpenseList from '../components/ExpenseList';
 
-function HomePage({ editingExpenseId, expenses, onDeleteExpense, onEditExpense }) {
+function HomePage({
+  budget,
+  editingExpenseId,
+  expenses,
+  onBudgetChange,
+  onDeleteExpense,
+  onEditExpense,
+  totalExpenseAmount,
+}) {
   return (
     <section className="page-panel">
       <div className="page-intro">
         <h2>Home</h2>
-        <p>Review your latest spending and edit any expense when plans change.</p>
+        <p>
+          Review your latest spending, adjust your budget target, and edit any
+          expense when plans change.
+        </p>
       </div>
+
+      <BudgetPanel
+        budget={budget}
+        onBudgetChange={onBudgetChange}
+        totalExpenseAmount={totalExpenseAmount}
+      />
 
       <ExpenseList
         editingExpenseId={editingExpenseId}
