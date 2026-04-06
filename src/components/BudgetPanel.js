@@ -56,7 +56,7 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
         </article>
 
         <article className="budget-metric-card">
-          <span>Total Spent</span>
+          <span>Total Spending</span>
           <strong>{formatCurrency(totalExpenseAmount)}</strong>
         </article>
 

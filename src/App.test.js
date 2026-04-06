@@ -29,7 +29,7 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-test('renders navbar links and budget panel on the home page', () => {
+test('renders navbar links, total spending, and budget panel on the home page', () => {
   renderApp();
 
   expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
@@ -37,6 +37,7 @@ test('renders navbar links and budget panel on the home page', () => {
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
+  expect(screen.getByText('Total Spending', { selector: '.summary-panel span' })).toBeInTheDocument();
 });
 
 test('updates the budget and saves it to localStorage', () => {
@@ -50,6 +51,40 @@ test('updates the budget and saves it to localStorage', () => {
   expect(screen.getByText('Current Budget')).toBeInTheDocument();
   expect(screen.getByText('Remaining')).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-budget')).toBe('1500');
+});
+
+test('recalculates total spending when expenses change', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      {
+        id: 'expense-1',
+        title: 'Lunch',
+        amount: 50,
+        category: 'Food',
+        date: '2026-04-04',
+      },
+      {
+        id: 'expense-2',
+        title: 'Taxi',
+        amount: 30,
+        category: 'Travel',
+        date: '2026-04-05',
+      },
+    ])
+  );
+
+  renderApp();
+
+  expect(
+    await screen.findByText('$80.00', { selector: '.summary-panel strong' })
+  ).toBeInTheDocument();
+
+  fireEvent.click(screen.getAllByRole('button', { name: /delete/i })[0]);
+
+  expect(
+    await screen.findByText('$30.00', { selector: '.summary-panel strong' })
+  ).toBeInTheDocument();
 });
 
 test('edits an existing expense from home and returns to the list', async () => {
@@ -161,3 +196,4 @@ test('toggles dark mode and saves the preference', () => {
   expect(screen.getByRole('button', { name: /light mode/i })).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-theme')).toBe('dark');
 });
+

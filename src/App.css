@@ -212,7 +212,7 @@
 
 .page-intro p {
   margin: 10px 0 0;
-  max-width: 680px;
+  max-width: 1000px;
   color: var(--text-muted);
   line-height: 1.6;
   transition: color 0.35s ease;
@@ -802,3 +802,4 @@
     align-items: flex-start;
   }
 }
+
