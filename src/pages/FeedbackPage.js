@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const STAR_OPTIONS = [1, 2, 3, 4, 5];
 const FEEDBACK_STORAGE_KEY = 'expense-tracker-feedback';
@@ -10,12 +10,59 @@ const createFeedbackEntry = (rating, feedback) => ({
   submittedAt: new Date().toISOString(),
 });
 
+const normalizeFeedbackEntry = (entry, index) => {
+  const numericRating = Number(entry?.rating);
+  const trimmedFeedback = typeof entry?.feedback === 'string' ? entry.feedback.trim() : '';
+
+  if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
+    return null;
+  }
+
+  if (!trimmedFeedback) {
+    return null;
+  }
+
+  return {
+    id: entry?.id || `saved-feedback-${index}`,
+    rating: numericRating,
+    feedback: trimmedFeedback,
+    submittedAt: entry?.submittedAt || '',
+  };
+};
+
+const getInitialFeedbackEntries = () => {
+  try {
+    const savedFeedback = localStorage.getItem(FEEDBACK_STORAGE_KEY);
+    const parsedFeedback = savedFeedback ? JSON.parse(savedFeedback) : [];
+
+    if (!Array.isArray(parsedFeedback)) {
+      return [];
+    }
+
+    return parsedFeedback
+      .map((entry, index) => normalizeFeedbackEntry(entry, index))
+      .filter(Boolean);
+  } catch (storageError) {
+    console.error('Failed to load feedback from localStorage.', storageError);
+    return [];
+  }
+};
+
 function FeedbackPage() {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [error, setError] = useState('');
   const [submittedRating, setSubmittedRating] = useState(null);
+  const [feedbackEntries, setFeedbackEntries] = useState(getInitialFeedbackEntries);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(feedbackEntries));
+    } catch (storageError) {
+      console.error('Failed to save feedback to localStorage.', storageError);
+    }
+  }, [feedbackEntries]);
 
   const activeRating = hoveredRating || rating;
   const ratingMessage = hoveredRating
@@ -40,12 +87,10 @@ function FeedbackPage() {
     }
 
     try {
-      const existingFeedback = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-      const parsedFeedback = existingFeedback ? JSON.parse(existingFeedback) : [];
-      const nextFeedback = Array.isArray(parsedFeedback) ? parsedFeedback : [];
-
-      nextFeedback.push(createFeedbackEntry(rating, trimmedFeedback));
-      localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(nextFeedback));
+      setFeedbackEntries((currentEntries) => [
+        createFeedbackEntry(rating, trimmedFeedback),
+        ...currentEntries,
+      ]);
     } catch (storageError) {
       console.error('Failed to save feedback to localStorage.', storageError);
       setError('Unable to save your feedback right now. Please try again.');
@@ -157,6 +202,34 @@ function FeedbackPage() {
           </button>
         </div>
       </form>
+
+      <section className="feedback-history">
+        <div className="list-header">
+          <h2>Previous Feedback</h2>
+          <span>{feedbackEntries.length} entries</span>
+        </div>
+
+        {feedbackEntries.length > 0 ? (
+          <div className="feedback-list">
+            {feedbackEntries.map((entry) => (
+              <article className="feedback-card" key={entry.id}>
+                <div className="feedback-card-header">
+                  <strong className="feedback-card-rating">
+                    {'\u2605'.repeat(entry.rating)}
+                  </strong>
+                  <span>{entry.rating}/5</span>
+                </div>
+                <p className="feedback-card-text">{entry.feedback}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">
+            <h2>No feedback yet</h2>
+            <p>Submitted feedback will appear here once you share your first review.</p>
+          </div>
+        )}
+      </section>
     </section>
   );
 }

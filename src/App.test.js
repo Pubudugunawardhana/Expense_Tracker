@@ -200,7 +200,36 @@ test('supports previewing and selecting a feedback star rating', async () => {
   expect(fiveStarButton).not.toHaveClass('feedback-star-button-selected');
 });
 
-test('submits feedback on the feedback page, saves it, and clears the form', async () => {
+test('loads previous feedback from localStorage and displays it as cards', async () => {
+  localStorage.setItem(
+    'expense-tracker-feedback',
+    JSON.stringify([
+      {
+        id: 'feedback-1',
+        rating: 5,
+        feedback: 'Great analytics and budget tracking.',
+        submittedAt: '2026-04-06T09:00:00.000Z',
+      },
+      {
+        id: 'feedback-2',
+        rating: 3,
+        feedback: 'The feedback page is clean and easy to use.',
+        submittedAt: '2026-04-06T10:00:00.000Z',
+      },
+    ])
+  );
+
+  renderApp(['/feedback']);
+
+  expect(screen.getByRole('heading', { name: /previous feedback/i })).toBeInTheDocument();
+  expect(screen.getByText('Great analytics and budget tracking.')).toBeInTheDocument();
+  expect(screen.getByText('The feedback page is clean and easy to use.')).toBeInTheDocument();
+  expect(screen.getByText('5/5')).toBeInTheDocument();
+  expect(screen.getByText('3/5')).toBeInTheDocument();
+  expect(screen.getByText('2 entries')).toBeInTheDocument();
+});
+
+test('submits feedback on the feedback page, saves it, clears the form, and shows it in the list', async () => {
   renderApp(['/feedback']);
 
   expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
@@ -215,6 +244,10 @@ test('submits feedback on the feedback page, saves it, and clears the form', asy
   expect(screen.getByText(/4-star response was received successfully/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/your feedback/i)).toHaveValue('');
   expect(screen.getByText(/choose a rating from 1 to 5 stars/i)).toBeInTheDocument();
+  expect(
+    screen.getByText('The budget and chart pages are especially helpful.')
+  ).toBeInTheDocument();
+  expect(screen.getByText('1 entries')).toBeInTheDocument();
 
   const storedFeedback = JSON.parse(
     localStorage.getItem('expense-tracker-feedback') || '[]'
