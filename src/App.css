@@ -942,6 +942,35 @@
     background-color 0.35s ease, color 0.35s ease;
 }
 
+.feedback-average-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    rgba(244, 162, 89, 0.18) 0%,
+    rgba(62, 146, 204, 0.12) 100%
+  );
+  border: 1px solid rgba(244, 162, 89, 0.24);
+  color: var(--text-primary);
+  transition: background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+.feedback-average-card span {
+  color: var(--text-secondary);
+  font-size: 0.96rem;
+  font-weight: 700;
+  transition: color 0.35s ease;
+}
+
+.feedback-average-card strong {
+  color: var(--text-primary);
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  transition: color 0.35s ease;
+}
 .feedback-form {
   max-width: 760px;
 }

@@ -70,6 +70,12 @@ function FeedbackPage() {
     : rating > 0
       ? `${rating} out of 5 stars selected`
       : 'Choose a rating from 1 to 5 stars.';
+  const averageRating = feedbackEntries.length > 0
+    ? (
+        feedbackEntries.reduce((total, entry) => total + entry.rating, 0) /
+        feedbackEntries.length
+      ).toFixed(1)
+    : '0.0';
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -119,6 +125,11 @@ function FeedbackPage() {
           Share a quick rating and tell us what is working well or what could be
           improved next.
         </p>
+      </div>
+
+      <div className="feedback-average-card">
+        <span>Average Rating</span>
+        <strong>{averageRating} / 5</strong>
       </div>
 
       <form className="expense-form feedback-form" onSubmit={handleSubmit}>

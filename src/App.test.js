@@ -200,7 +200,7 @@ test('supports previewing and selecting a feedback star rating', async () => {
   expect(fiveStarButton).not.toHaveClass('feedback-star-button-selected');
 });
 
-test('loads previous feedback from localStorage and displays it as cards', async () => {
+test('loads previous feedback from localStorage, displays it as cards, and shows the average rating', async () => {
   localStorage.setItem(
     'expense-tracker-feedback',
     JSON.stringify([
@@ -227,12 +227,15 @@ test('loads previous feedback from localStorage and displays it as cards', async
   expect(screen.getByText('5/5')).toBeInTheDocument();
   expect(screen.getByText('3/5')).toBeInTheDocument();
   expect(screen.getByText('2 entries')).toBeInTheDocument();
+  expect(screen.getByText('Average Rating')).toBeInTheDocument();
+  expect(screen.getByText('4.0 / 5')).toBeInTheDocument();
 });
 
-test('submits feedback on the feedback page, saves it, clears the form, and shows it in the list', async () => {
+test('submits feedback on the feedback page, saves it, clears the form, shows it in the list, and updates the average', async () => {
   renderApp(['/feedback']);
 
   expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
+  expect(screen.getByText('0.0 / 5')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^4 stars$/i }));
   fireEvent.change(screen.getByLabelText(/your feedback/i), {
@@ -248,6 +251,7 @@ test('submits feedback on the feedback page, saves it, clears the form, and show
     screen.getByText('The budget and chart pages are especially helpful.')
   ).toBeInTheDocument();
   expect(screen.getByText('1 entries')).toBeInTheDocument();
+  expect(screen.getByText('4.0 / 5')).toBeInTheDocument();
 
   const storedFeedback = JSON.parse(
     localStorage.getItem('expense-tracker-feedback') || '[]'
