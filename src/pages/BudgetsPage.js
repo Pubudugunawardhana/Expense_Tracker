@@ -1,4 +1,4 @@
-﻿import CategoryBudgetSection from '../components/CategoryBudgetSection';
+import CategoryBudgetSection from '../components/CategoryBudgetSection';
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat('en-US', {

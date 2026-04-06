@@ -1,4 +1,4 @@
-﻿import ExpenseCharts from '../components/ExpenseCharts';
+import ExpenseCharts from '../components/ExpenseCharts';
 
 function SummaryPage({ categorySummary, expenses, totalExpenseAmount }) {
   return (
