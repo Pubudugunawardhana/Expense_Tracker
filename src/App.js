@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AddExpensePage from './pages/AddExpensePage';
+import BudgetsPage from './pages/BudgetsPage';
 import HomePage from './pages/HomePage';
 import SummaryPage from './pages/SummaryPage';
 import EXPENSE_CATEGORIES, { DEFAULT_CATEGORY } from './data/expenseCategories';
@@ -238,8 +239,8 @@ function App() {
           </div>
 
           <p className="app-description">
-            Track daily spending, manage a budget target, compare trends over time,
-            and keep your totals in view.
+            Track daily spending, manage budget targets, compare trends over time,
+            and review category budgets on a dedicated page.
           </p>
         </div>
 
@@ -272,13 +273,20 @@ function App() {
               }
             />
             <Route
+              path="/budgets"
+              element={
+                <BudgetsPage
+                  categoryBudgetSummary={categoryBudgetSummary}
+                  onCategoryBudgetChange={handleCategoryBudgetChange}
+                />
+              }
+            />
+            <Route
               path="/summary"
               element={
                 <SummaryPage
-                  categoryBudgetSummary={categoryBudgetSummary}
                   categorySummary={categorySummary}
                   expenses={expenses}
-                  onCategoryBudgetChange={handleCategoryBudgetChange}
                   totalExpenseAmount={totalExpenseAmount}
                 />
               }

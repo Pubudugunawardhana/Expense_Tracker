@@ -1,8 +1,9 @@
-import { NavLink } from 'react-router-dom';
+﻿import { NavLink } from 'react-router-dom';
 
 const NAV_ITEMS = [
   { label: 'Home', to: '/', end: true },
   { label: 'Add Expense', to: '/add', end: false },
+  { label: 'Budgets', to: '/budgets', end: false },
   { label: 'Summary', to: '/summary', end: false },
 ];
 

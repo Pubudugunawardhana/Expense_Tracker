@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+﻿import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
@@ -34,6 +34,7 @@ test('renders navbar links, total spending, and budget panel on the home page', 
 
   expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /add expense/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /^budgets$/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
@@ -139,7 +140,7 @@ test('shows within budget, near limit, and over budget statuses', async () => {
   expect(screen.getByText('113%')).toBeInTheDocument();
 });
 
-test('updates category budgets and shows the category comparison chart', async () => {
+test('updates category budgets on the budgets page and shows the category comparison chart', async () => {
   localStorage.setItem(
     'expense-tracker-expenses',
     JSON.stringify([
@@ -160,8 +161,9 @@ test('updates category budgets and shows the category comparison chart', async (
     ])
   );
 
-  renderApp(['/summary']);
+  renderApp(['/budgets']);
 
+  expect(screen.getByRole('heading', { name: /^budgets$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /category budgets/i })).toBeInTheDocument();
   expect(
     screen.getByRole('heading', { name: /budget vs spending by category/i })
@@ -290,7 +292,6 @@ test('shows the summary page with totals and chart controls', async () => {
   expect(
     await screen.findByText('$700.00', { selector: '.summary-panel strong' })
   ).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: /category budgets/i })).toBeInTheDocument();
   expect(
     screen.getByText('Travel', { selector: '.category-total-card p' })
   ).toBeInTheDocument();
