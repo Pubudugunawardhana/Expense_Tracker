@@ -7,8 +7,33 @@ const formatCurrency = (value) =>
 
 function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
   const remainingBudget = budget - totalExpenseAmount;
-  const spentPercentage =
-    budget > 0 ? Math.min((totalExpenseAmount / budget) * 100, 100) : 0;
+  const spentPercentage = budget > 0 ? (totalExpenseAmount / budget) * 100 : 0;
+  const progressPercentage = Math.min(Math.max(spentPercentage, 0), 100);
+  const budgetStatus =
+    budget <= 0
+      ? {
+          label: 'Set a budget',
+          message: 'Add a budget to compare your target with actual spending.',
+          modifier: 'neutral',
+        }
+      : totalExpenseAmount > budget
+        ? {
+            label: 'Over budget',
+            message: 'Your spending has exceeded the budget you set.',
+            modifier: 'over',
+          }
+        : spentPercentage >= 80
+          ? {
+              label: 'Near limit',
+              message:
+                'You are above 80% of your budget, so spending is getting close.',
+              modifier: 'warning',
+            }
+          : {
+              label: 'Within budget',
+              message: 'Your spending is still in a safe range for this budget.',
+              modifier: 'safe',
+            };
 
   const handleBudgetInputChange = (event) => {
     const nextValue = event.target.value;
@@ -56,18 +81,31 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
         </article>
 
         <article className="budget-metric-card">
-          <span>Total Spending</span>
+          <span>Total Spent</span>
           <strong>{formatCurrency(totalExpenseAmount)}</strong>
         </article>
 
         <article className="budget-metric-card">
-          <span>Remaining</span>
+          <span>Remaining Budget</span>
           <strong
             className={remainingBudget < 0 ? 'budget-negative' : 'budget-positive'}
           >
             {formatCurrency(remainingBudget)}
           </strong>
         </article>
+
+        <article className="budget-metric-card">
+          <span>Percentage Used</span>
+          <strong>{budget > 0 ? `${spentPercentage.toFixed(0)}%` : '0%'}</strong>
+        </article>
+      </div>
+
+      <div
+        className={`budget-status budget-status-${budgetStatus.modifier}`}
+        role="status"
+      >
+        <strong>{budgetStatus.label}</strong>
+        <p>{budgetStatus.message}</p>
       </div>
 
       <div className="budget-progress" aria-hidden="true">
@@ -76,7 +114,7 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
             className={`budget-progress-fill${
               remainingBudget < 0 ? ' budget-progress-fill-over' : ''
             }`}
-            style={{ width: `${spentPercentage}%` }}
+            style={{ width: `${progressPercentage}%` }}
           />
         </div>
         <p>

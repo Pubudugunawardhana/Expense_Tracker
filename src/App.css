@@ -239,6 +239,11 @@
   opacity: 0.8;
 }
 
+.summary-panel-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .summary-panel strong {
   font-size: clamp(1.6rem, 4vw, 2.2rem);
 }
@@ -305,7 +310,7 @@
 
 .budget-metric-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
@@ -340,6 +345,47 @@
   color: var(--danger-text) !important;
 }
 
+.budget-status {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background-color: var(--surface-bg);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.budget-status strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: color 0.35s ease;
+}
+
+.budget-status p {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+  transition: color 0.35s ease;
+}
+
+.budget-status-safe {
+  border-color: rgba(44, 159, 132, 0.28);
+  background-color: rgba(44, 159, 132, 0.08);
+}
+
+.budget-status-warning {
+  border-color: rgba(244, 162, 89, 0.34);
+  background-color: rgba(244, 162, 89, 0.1);
+}
+
+.budget-status-over {
+  border-color: rgba(239, 111, 108, 0.34);
+  background-color: rgba(239, 111, 108, 0.1);
+}
+
+.budget-status-neutral {
+  border-style: dashed;
+}
 .budget-progress {
   margin-top: 18px;
 }
@@ -802,4 +848,8 @@
     align-items: flex-start;
   }
 }
+
+
+
+
 

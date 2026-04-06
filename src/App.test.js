@@ -37,7 +37,9 @@ test('renders navbar links, total spending, and budget panel on the home page', 
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
-  expect(screen.getByText('Total Spending', { selector: '.summary-panel span' })).toBeInTheDocument();
+  expect(
+    screen.getByText('Total Spending', { selector: '.summary-panel span' })
+  ).toBeInTheDocument();
 });
 
 test('updates the budget and saves it to localStorage', () => {
@@ -49,8 +51,47 @@ test('updates the budget and saves it to localStorage', () => {
 
   expect(screen.getByDisplayValue(1500)).toBeInTheDocument();
   expect(screen.getByText('Current Budget')).toBeInTheDocument();
-  expect(screen.getByText('Remaining')).toBeInTheDocument();
+  expect(screen.getByText('Remaining Budget')).toBeInTheDocument();
+  expect(screen.getByText('Percentage Used')).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-budget')).toBe('1500');
+});
+
+test('shows within budget, near limit, and over budget statuses', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      {
+        id: 'expense-1',
+        title: 'Groceries',
+        amount: 90,
+        category: 'Food',
+        date: '2026-04-04',
+      },
+    ])
+  );
+
+  renderApp();
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '200' },
+  });
+
+  expect(await screen.findByText('Within budget')).toBeInTheDocument();
+  expect(screen.getByText('45%')).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '100' },
+  });
+
+  expect(await screen.findByText('Near limit')).toBeInTheDocument();
+  expect(screen.getByText('90%')).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '80' },
+  });
+
+  expect(await screen.findByText('Over budget')).toBeInTheDocument();
+  expect(screen.getByText('113%')).toBeInTheDocument();
 });
 
 test('recalculates total spending when expenses change', async () => {
@@ -196,4 +237,3 @@ test('toggles dark mode and saves the preference', () => {
   expect(screen.getByRole('button', { name: /light mode/i })).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-theme')).toBe('dark');
 });
-

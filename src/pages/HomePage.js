@@ -15,13 +15,14 @@ function HomePage({
       <div className="page-intro">
         <h2>Home</h2>
         <p>
-          Review your latest spending, see your total at a glance, adjust your budget target, and edit any expense when plans change.
+          Review your latest spending, see your total at a glance, adjust your
+          budget target, and edit any expense when plans change.
         </p>
       </div>
 
       <div className="summary-panel">
         <div className="summary-panel-copy">
-          <strong>Total Spending </strong>
+          <span>Total Spending</span>
           <strong>${totalExpenseAmount.toFixed(2)}</strong>
         </div>
         <span>{expenses.length} expenses tracked</span>
