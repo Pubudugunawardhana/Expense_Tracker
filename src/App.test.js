@@ -2,6 +2,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
+if (!window.ResizeObserver) {
+  window.ResizeObserver = class ResizeObserver {
+    observe() {}
+
+    unobserve() {}
+
+    disconnect() {}
+  };
+}
+
 const renderApp = (initialEntries = ['/']) =>
   render(
     <MemoryRouter
@@ -32,7 +42,13 @@ test('edits an existing expense from home and returns to the list', async () => 
   localStorage.setItem(
     'expense-tracker-expenses',
     JSON.stringify([
-      { id: 'expense-1', title: 'Groceries', amount: 45, category: 'Food' },
+      {
+        id: 'expense-1',
+        title: 'Groceries',
+        amount: 45,
+        category: 'Food',
+        date: '2026-04-04',
+      },
     ])
   );
 
@@ -46,6 +62,7 @@ test('edits an existing expense from home and returns to the list', async () => 
   expect(screen.getByLabelText(/title/i)).toHaveValue('Groceries');
   expect(screen.getByLabelText(/amount/i)).toHaveValue(45);
   expect(screen.getByLabelText(/category/i)).toHaveValue('Food');
+  expect(screen.getByLabelText(/date/i)).toHaveValue('2026-04-04');
 
   fireEvent.change(screen.getByLabelText(/title/i), {
     target: { value: 'Rent' },
@@ -56,6 +73,9 @@ test('edits an existing expense from home and returns to the list', async () => 
   fireEvent.change(screen.getByLabelText(/category/i), {
     target: { value: 'Bills' },
   });
+  fireEvent.change(screen.getByLabelText(/date/i), {
+    target: { value: '2026-04-05' },
+  });
   fireEvent.click(screen.getByRole('button', { name: /update expense/i }));
 
   expect(await screen.findByText('Rent')).toBeInTheDocument();
@@ -63,21 +83,57 @@ test('edits an existing expense from home and returns to the list', async () => 
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
 });
 
-test('shows the summary page with total and category breakdown', async () => {
+test('shows the summary page with totals and chart controls', async () => {
   localStorage.setItem(
     'expense-tracker-expenses',
     JSON.stringify([
-      { id: 'expense-1', title: 'Flight', amount: 500, category: 'Travel' },
-      { id: 'expense-2', title: 'Dinner', amount: 80, category: 'Food' },
+      {
+        id: 'expense-1',
+        title: 'Flight',
+        amount: 500,
+        category: 'Travel',
+        date: '2026-04-01',
+      },
+      {
+        id: 'expense-2',
+        title: 'Dinner',
+        amount: 80,
+        category: 'Food',
+        date: '2026-04-02',
+      },
+      {
+        id: 'expense-3',
+        title: 'Power',
+        amount: 120,
+        category: 'Bills',
+        date: '2026-03-28',
+      },
     ])
   );
 
   renderApp(['/summary']);
 
   expect(screen.getByRole('heading', { name: /^summary$/i })).toBeInTheDocument();
-  expect(await screen.findByText('$580.00', { selector: '.summary-panel strong' })).toBeInTheDocument();
-  expect(screen.getByText('Travel', { selector: '.category-total-card p' })).toBeInTheDocument();
-  expect(screen.getByText('Food', { selector: '.category-total-card p' })).toBeInTheDocument();
+  expect(
+    await screen.findByText('$700.00', { selector: '.summary-panel strong' })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText('Travel', { selector: '.category-total-card p' })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: /expense analytics/i })
+  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /^daily$/i })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+
+  fireEvent.click(screen.getByRole('button', { name: /^monthly$/i }));
+
+  expect(screen.getByRole('button', { name: /^monthly$/i })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
 });
 
 test('toggles dark mode and saves the preference', () => {

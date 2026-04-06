@@ -1,3 +1,5 @@
+import { formatExpenseDate } from '../utils/expenseAnalytics';
+
 function ExpenseItem({ expense, isEditing, onDeleteExpense, onEditExpense }) {
   return (
     <li className={`expense-item${isEditing ? ' expense-item-editing' : ''}`}>
@@ -6,7 +8,9 @@ function ExpenseItem({ expense, isEditing, onDeleteExpense, onEditExpense }) {
         <div className="expense-details">
           <span className="category-badge">{expense.category}</span>
           <p className="expense-meta">
-            {isEditing ? 'Currently editing' : 'Added expense'}
+            {isEditing
+              ? `Currently editing | ${formatExpenseDate(expense.date)}`
+              : formatExpenseDate(expense.date)}
           </p>
         </div>
       </div>

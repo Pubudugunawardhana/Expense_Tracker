@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import EXPENSE_CATEGORIES, {
   DEFAULT_CATEGORY,
 } from '../data/expenseCategories';
+import { normalizeExpenseDate } from '../utils/expenseAnalytics';
 
 const createExpenseId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -15,13 +16,15 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
+  const [date, setDate] = useState(() => normalizeExpenseDate());
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (editingExpense) {
       setTitle(editingExpense.title);
       setAmount(editingExpense.amount.toString());
-      setCategory(editingExpense.category);
+      setCategory(editingExpense.category || DEFAULT_CATEGORY);
+      setDate(normalizeExpenseDate(editingExpense.date));
       setError('');
       return;
     }
@@ -29,6 +32,7 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
     setTitle('');
     setAmount('');
     setCategory(DEFAULT_CATEGORY);
+    setDate(normalizeExpenseDate());
     setError('');
   }, [editingExpense]);
 
@@ -53,16 +57,23 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
       return;
     }
 
+    if (!date) {
+      setError('Please choose a date.');
+      return;
+    }
+
     onSaveExpense({
       id: editingExpense?.id ?? createExpenseId(),
       title: trimmedTitle,
       amount: numericAmount,
       category,
+      date: normalizeExpenseDate(date),
     });
 
     setTitle('');
     setAmount('');
     setCategory(DEFAULT_CATEGORY);
+    setDate(normalizeExpenseDate());
     setError('');
   };
 
@@ -73,13 +84,13 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
           <h2>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</h2>
           <p>
             {editingExpense
-              ? 'Update the title and amount, then save your changes.'
-              : 'Add a title and amount to keep track of your spending.'}
+              ? 'Update the title, amount, category, and date, then save your changes.'
+              : 'Add a title, amount, category, and date to keep track of your spending.'}
           </p>
         </div>
       ) : null}
 
-      <div className="form-grid">
+      <div className="form-grid form-grid-extended">
         <label className="form-field" htmlFor="expense-title">
           <span>Title</span>
           <input
@@ -117,6 +128,16 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="form-field" htmlFor="expense-date">
+          <span>Date</span>
+          <input
+            id="expense-date"
+            type="date"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+          />
         </label>
       </div>
 

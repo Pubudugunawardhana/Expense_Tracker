@@ -5,6 +5,7 @@ import AddExpensePage from './pages/AddExpensePage';
 import HomePage from './pages/HomePage';
 import SummaryPage from './pages/SummaryPage';
 import { DEFAULT_CATEGORY } from './data/expenseCategories';
+import { normalizeExpenseDate } from './utils/expenseAnalytics';
 import './App.css';
 
 const STORAGE_KEY = 'expense-tracker-expenses';
@@ -18,6 +19,7 @@ const normalizeExpense = (expense) => {
     title: expense.title,
     amount: Number.isFinite(numericAmount) ? numericAmount : 0,
     category: expense.category || DEFAULT_CATEGORY,
+    date: normalizeExpenseDate(expense.date),
   };
 };
 
@@ -72,18 +74,20 @@ function App() {
   }, [theme]);
 
   const handleSaveExpense = (expenseToSave) => {
+    const normalizedExpense = normalizeExpense(expenseToSave);
+
     setExpenses((currentExpenses) => {
       const existingExpense = currentExpenses.some(
-        (expense) => expense.id === expenseToSave.id
+        (expense) => expense.id === normalizedExpense.id
       );
 
       if (existingExpense) {
         return currentExpenses.map((expense) =>
-          expense.id === expenseToSave.id ? expenseToSave : expense
+          expense.id === normalizedExpense.id ? normalizedExpense : expense
         );
       }
 
-      return [expenseToSave, ...currentExpenses];
+      return [normalizedExpense, ...currentExpenses];
     });
 
     setEditingExpense(null);
@@ -160,7 +164,7 @@ function App() {
           </div>
 
           <p className="app-description">
-            Track daily spending, move between pages quickly, and keep your totals in view.
+            Track daily spending, compare trends over time, and keep your totals in view.
           </p>
         </div>
 
@@ -194,6 +198,7 @@ function App() {
               element={
                 <SummaryPage
                   categorySummary={categorySummary}
+                  expenses={expenses}
                   totalExpenseAmount={totalExpenseAmount}
                 />
               }

@@ -8,7 +8,7 @@ function AddExpensePage({ editingExpense, onCancelEdit, onSaveExpense }) {
         <p>
           {editingExpense
             ? 'Adjust the details below and save to update the existing record.'
-            : 'Log a new expense with a title, amount, and category.'}
+            : 'Log a new expense with a title, amount, category, and date.'}
         </p>
       </div>
 
