@@ -1,47 +1,55 @@
 import { useEffect, useState } from 'react';
 
 const STAR_OPTIONS = [1, 2, 3, 4, 5];
-const FEEDBACK_STORAGE_KEY = 'expense-tracker-feedback';
+const FEEDBACK_STORAGE_KEY = 'feedback';
+const LEGACY_FEEDBACK_STORAGE_KEY = 'expense-tracker-feedback';
 
-const createFeedbackEntry = (rating, feedback) => ({
-  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+const createFeedbackEntry = (rating, text) => ({
   rating,
-  feedback,
-  submittedAt: new Date().toISOString(),
+  text,
+  date: new Date().toISOString(),
 });
 
-const normalizeFeedbackEntry = (entry, index) => {
+const normalizeFeedbackEntry = (entry) => {
   const numericRating = Number(entry?.rating);
-  const trimmedFeedback = typeof entry?.feedback === 'string' ? entry.feedback.trim() : '';
+  const trimmedText = typeof entry?.text === 'string'
+    ? entry.text.trim()
+    : typeof entry?.feedback === 'string'
+      ? entry.feedback.trim()
+      : '';
+  const savedDate = typeof entry?.date === 'string'
+    ? entry.date
+    : typeof entry?.submittedAt === 'string'
+      ? entry.submittedAt
+      : '';
 
   if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
     return null;
   }
 
-  if (!trimmedFeedback) {
+  if (!trimmedText) {
     return null;
   }
 
   return {
-    id: entry?.id || `saved-feedback-${index}`,
     rating: numericRating,
-    feedback: trimmedFeedback,
-    submittedAt: entry?.submittedAt || '',
+    text: trimmedText,
+    date: savedDate,
   };
 };
 
 const getInitialFeedbackEntries = () => {
   try {
     const savedFeedback = localStorage.getItem(FEEDBACK_STORAGE_KEY);
-    const parsedFeedback = savedFeedback ? JSON.parse(savedFeedback) : [];
+    const legacyFeedback = localStorage.getItem(LEGACY_FEEDBACK_STORAGE_KEY);
+    const source = savedFeedback ?? legacyFeedback;
+    const parsedFeedback = source ? JSON.parse(source) : [];
 
     if (!Array.isArray(parsedFeedback)) {
       return [];
     }
 
-    return parsedFeedback
-      .map((entry, index) => normalizeFeedbackEntry(entry, index))
-      .filter(Boolean);
+    return parsedFeedback.map(normalizeFeedbackEntry).filter(Boolean);
   } catch (storageError) {
     console.error('Failed to load feedback from localStorage.', storageError);
     return [];
@@ -94,8 +102,8 @@ function FeedbackPage() {
 
     try {
       setFeedbackEntries((currentEntries) => [
-        createFeedbackEntry(rating, trimmedFeedback),
         ...currentEntries,
+        createFeedbackEntry(rating, trimmedFeedback),
       ]);
     } catch (storageError) {
       console.error('Failed to save feedback to localStorage.', storageError);
@@ -222,15 +230,15 @@ function FeedbackPage() {
 
         {feedbackEntries.length > 0 ? (
           <div className="feedback-list">
-            {feedbackEntries.map((entry) => (
-              <article className="feedback-card" key={entry.id}>
+            {feedbackEntries.map((entry, index) => (
+              <article className="feedback-card" key={`${entry.date || 'feedback'}-${index}`}>
                 <div className="feedback-card-header">
                   <strong className="feedback-card-rating">
                     {'\u2605'.repeat(entry.rating)}
                   </strong>
                   <span>{entry.rating}/5</span>
                 </div>
-                <p className="feedback-card-text">{entry.feedback}</p>
+                <p className="feedback-card-text">{entry.text}</p>
               </article>
             ))}
           </div>

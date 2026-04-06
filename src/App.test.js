@@ -202,19 +202,17 @@ test('supports previewing and selecting a feedback star rating', async () => {
 
 test('loads previous feedback from localStorage, displays it as cards, and shows the average rating', async () => {
   localStorage.setItem(
-    'expense-tracker-feedback',
+    'feedback',
     JSON.stringify([
       {
-        id: 'feedback-1',
         rating: 5,
-        feedback: 'Great analytics and budget tracking.',
-        submittedAt: '2026-04-06T09:00:00.000Z',
+        text: 'Great analytics and budget tracking.',
+        date: '2026-04-06T09:00:00.000Z',
       },
       {
-        id: 'feedback-2',
         rating: 3,
-        feedback: 'The feedback page is clean and easy to use.',
-        submittedAt: '2026-04-06T10:00:00.000Z',
+        text: 'The feedback page is clean and easy to use.',
+        date: '2026-04-06T10:00:00.000Z',
       },
     ])
   );
@@ -231,11 +229,22 @@ test('loads previous feedback from localStorage, displays it as cards, and shows
   expect(screen.getByText('4.0 / 5')).toBeInTheDocument();
 });
 
-test('submits feedback on the feedback page, saves it, clears the form, shows it in the list, and updates the average', async () => {
+test('submits feedback on the feedback page, appends it under the feedback key, clears the form, and keeps existing entries', async () => {
+  localStorage.setItem(
+    'feedback',
+    JSON.stringify([
+      {
+        rating: 5,
+        text: 'Great analytics and budget tracking.',
+        date: '2026-04-06T09:00:00.000Z',
+      },
+    ])
+  );
+
   renderApp(['/feedback']);
 
   expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
-  expect(screen.getByText('0.0 / 5')).toBeInTheDocument();
+  expect(screen.getByText('5.0 / 5')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^4 stars$/i }));
   fireEvent.change(screen.getByLabelText(/your feedback/i), {
@@ -250,18 +259,22 @@ test('submits feedback on the feedback page, saves it, clears the form, shows it
   expect(
     screen.getByText('The budget and chart pages are especially helpful.')
   ).toBeInTheDocument();
-  expect(screen.getByText('1 entries')).toBeInTheDocument();
-  expect(screen.getByText('4.0 / 5')).toBeInTheDocument();
+  expect(screen.getByText('2 entries')).toBeInTheDocument();
+  expect(screen.getByText('4.5 / 5')).toBeInTheDocument();
 
-  const storedFeedback = JSON.parse(
-    localStorage.getItem('expense-tracker-feedback') || '[]'
-  );
+  const storedFeedback = JSON.parse(localStorage.getItem('feedback') || '[]');
 
-  expect(storedFeedback).toHaveLength(1);
+  expect(storedFeedback).toHaveLength(2);
   expect(storedFeedback[0]).toMatchObject({
-    rating: 4,
-    feedback: 'The budget and chart pages are especially helpful.',
+    rating: 5,
+    text: 'Great analytics and budget tracking.',
+    date: '2026-04-06T09:00:00.000Z',
   });
+  expect(storedFeedback[1]).toMatchObject({
+    rating: 4,
+    text: 'The budget and chart pages are especially helpful.',
+  });
+  expect(typeof storedFeedback[1].date).toBe('string');
 });
 
 test('recalculates total spending when expenses change', async () => {
