@@ -1,13 +1,20 @@
+import CategoryBudgetSection from '../components/CategoryBudgetSection';
 import ExpenseCharts from '../components/ExpenseCharts';
 
-function SummaryPage({ categorySummary, expenses, totalExpenseAmount }) {
+function SummaryPage({
+  categoryBudgetSummary,
+  categorySummary,
+  expenses,
+  onCategoryBudgetChange,
+  totalExpenseAmount,
+}) {
   return (
     <section className="page-panel">
       <div className="page-intro">
         <h2>Summary</h2>
         <p>
-          See your total spending, category breakdown, and chart trends across
-          daily, monthly, and yearly views.
+          See your total spending, category breakdown, chart trends, and how
+          each category is tracking against its own budget.
         </p>
       </div>
 
@@ -15,6 +22,11 @@ function SummaryPage({ categorySummary, expenses, totalExpenseAmount }) {
         <span>Total Expenses</span>
         <strong>${totalExpenseAmount.toFixed(2)}</strong>
       </div>
+
+      <CategoryBudgetSection
+        categoryBudgetSummary={categoryBudgetSummary}
+        onCategoryBudgetChange={onCategoryBudgetChange}
+      />
 
       {categorySummary.length > 0 ? (
         <>
@@ -38,8 +50,10 @@ function SummaryPage({ categorySummary, expenses, totalExpenseAmount }) {
         </>
       ) : (
         <div className="empty-state">
-          <h2>No summary yet</h2>
-          <p>Add some expenses to see totals, category breakdowns, and charts.</p>
+          <h2>No expense summary yet</h2>
+          <p>
+            Add some expenses to unlock category breakdowns and analytics charts.
+          </p>
         </div>
       )}
     </section>

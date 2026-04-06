@@ -487,6 +487,141 @@
   transition: color 0.35s ease;
 }
 
+.category-budget-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.category-budget-card {
+  padding: 18px;
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.category-budget-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.category-budget-card-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  transition: color 0.35s ease;
+}
+
+.category-budget-status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.category-budget-status-chip-safe {
+  background-color: rgba(44, 159, 132, 0.12);
+  color: var(--chart-area);
+}
+
+.category-budget-status-chip-warning {
+  background-color: rgba(244, 162, 89, 0.14);
+  color: #b26b1a;
+}
+
+.category-budget-status-chip-over {
+  background-color: rgba(239, 111, 108, 0.14);
+  color: var(--danger-text);
+}
+
+.category-budget-status-chip-neutral {
+  background-color: var(--surface-bg);
+  color: var(--text-muted);
+  border: 1px dashed var(--surface-border);
+}
+
+.category-budget-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.category-budget-input span {
+  font-size: 0.92rem;
+}
+
+.category-budget-input input {
+  padding: 13px 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  font-size: 0.98rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.35s ease, color 0.35s ease;
+}
+
+.category-budget-input input:focus {
+  outline: none;
+  border-color: var(--primary-bg);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.category-budget-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.category-budget-metric {
+  padding: 12px 14px;
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  background-color: var(--surface-bg);
+}
+
+.category-budget-metric span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.category-budget-metric strong {
+  color: var(--text-primary);
+  font-size: 0.98rem;
+}
+
+.category-budget-chart-card {
+  padding: 18px;
+  border: 1px solid var(--surface-border);
+  border-radius: 20px;
+  background-color: var(--surface-alt);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.category-budget-chart-frame {
+  height: 280px;
+}
+
+.category-budget-chart-card .recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
 .chart-dashboard {
   display: flex;
   flex-direction: column;
@@ -884,6 +1019,8 @@
     align-items: flex-start;
   }
 }
+
+
 
 
 

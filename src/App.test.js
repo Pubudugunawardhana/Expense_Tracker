@@ -139,6 +139,44 @@ test('shows within budget, near limit, and over budget statuses', async () => {
   expect(screen.getByText('113%')).toBeInTheDocument();
 });
 
+test('updates category budgets and shows the category comparison chart', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      {
+        id: 'expense-1',
+        title: 'Dinner',
+        amount: 90,
+        category: 'Food',
+        date: '2026-04-02',
+      },
+      {
+        id: 'expense-2',
+        title: 'Train',
+        amount: 35,
+        category: 'Travel',
+        date: '2026-04-03',
+      },
+    ])
+  );
+
+  renderApp(['/summary']);
+
+  expect(screen.getByRole('heading', { name: /category budgets/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: /budget vs spending by category/i })
+  ).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText(/food budget/i), {
+    target: { value: '100' },
+  });
+
+  expect(await screen.findByText('Near limit')).toBeInTheDocument();
+  expect(localStorage.getItem('expense-tracker-category-budgets')).toContain(
+    '"Food":100'
+  );
+});
+
 test('recalculates total spending when expenses change', async () => {
   localStorage.setItem(
     'expense-tracker-expenses',
@@ -252,6 +290,7 @@ test('shows the summary page with totals and chart controls', async () => {
   expect(
     await screen.findByText('$700.00', { selector: '.summary-panel strong' })
   ).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /category budgets/i })).toBeInTheDocument();
   expect(
     screen.getByText('Travel', { selector: '.category-total-card p' })
   ).toBeInTheDocument();
@@ -282,6 +321,3 @@ test('toggles dark mode and saves the preference', () => {
   expect(screen.getByRole('button', { name: /light mode/i })).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-theme')).toBe('dark');
 });
-
-
-

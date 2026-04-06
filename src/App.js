@@ -4,13 +4,19 @@ import Navbar from './components/Navbar';
 import AddExpensePage from './pages/AddExpensePage';
 import HomePage from './pages/HomePage';
 import SummaryPage from './pages/SummaryPage';
-import { DEFAULT_CATEGORY } from './data/expenseCategories';
+import EXPENSE_CATEGORIES, { DEFAULT_CATEGORY } from './data/expenseCategories';
+import {
+  createCategoryBudgetSummary,
+  normalizeBudgetValue,
+  normalizeCategoryBudgets,
+} from './utils/categoryBudgets';
 import { normalizeExpenseDate } from './utils/expenseAnalytics';
 import './App.css';
 
 const STORAGE_KEY = 'expense-tracker-expenses';
 const THEME_STORAGE_KEY = 'expense-tracker-theme';
 const BUDGET_STORAGE_KEY = 'expense-tracker-budget';
+const CATEGORY_BUDGETS_STORAGE_KEY = 'expense-tracker-category-budgets';
 
 const normalizeExpense = (expense) => {
   const numericAmount = Number(expense.amount);
@@ -36,12 +42,31 @@ const getInitialBudget = () => {
   }
 };
 
+const getInitialCategoryBudgets = () => {
+  try {
+    const savedCategoryBudgets = localStorage.getItem(CATEGORY_BUDGETS_STORAGE_KEY);
+
+    if (!savedCategoryBudgets) {
+      return {};
+    }
+
+    return normalizeCategoryBudgets(
+      JSON.parse(savedCategoryBudgets),
+      EXPENSE_CATEGORIES
+    );
+  } catch (error) {
+    console.error('Failed to load category budgets from localStorage.', error);
+    return {};
+  }
+};
+
 function App() {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
   const [budget, setBudget] = useState(getInitialBudget);
+  const [categoryBudgets, setCategoryBudgets] = useState(getInitialCategoryBudgets);
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem(THEME_STORAGE_KEY) === 'dark'
@@ -86,6 +111,17 @@ function App() {
       console.error('Failed to save budget to localStorage.', error);
     }
   }, [budget]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CATEGORY_BUDGETS_STORAGE_KEY,
+        JSON.stringify(categoryBudgets)
+      );
+    } catch (error) {
+      console.error('Failed to save category budgets to localStorage.', error);
+    }
+  }, [categoryBudgets]);
 
   useEffect(() => {
     try {
@@ -156,6 +192,13 @@ function App() {
     setBudget(Number.isFinite(nextBudget) && nextBudget >= 0 ? nextBudget : 0);
   };
 
+  const handleCategoryBudgetChange = (category, nextBudget) => {
+    setCategoryBudgets((currentBudgets) => ({
+      ...currentBudgets,
+      [category]: normalizeBudgetValue(nextBudget),
+    }));
+  };
+
   const totalExpenseAmount = expenses.reduce(
     (total, expense) => total + expense.amount,
     0
@@ -167,6 +210,11 @@ function App() {
   const categorySummary = Object.entries(totalsByCategory).sort(
     (firstCategory, secondCategory) => secondCategory[1] - firstCategory[1]
   );
+  const categoryBudgetSummary = createCategoryBudgetSummary({
+    categories: EXPENSE_CATEGORIES,
+    categoryBudgets,
+    spendingByCategory: totalsByCategory,
+  });
 
   return (
     <main className={`app-shell theme-${theme}`}>
@@ -227,8 +275,10 @@ function App() {
               path="/summary"
               element={
                 <SummaryPage
+                  categoryBudgetSummary={categoryBudgetSummary}
                   categorySummary={categorySummary}
                   expenses={expenses}
+                  onCategoryBudgetChange={handleCategoryBudgetChange}
                   totalExpenseAmount={totalExpenseAmount}
                 />
               }
