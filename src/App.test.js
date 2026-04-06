@@ -37,6 +37,7 @@ test('renders navbar links, total spending, and budget panel on the home page', 
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /budget vs actual/i })).toBeInTheDocument();
   expect(
     screen.getByText('Total Spending', { selector: '.summary-panel span' })
   ).toBeInTheDocument();
@@ -281,3 +282,6 @@ test('toggles dark mode and saves the preference', () => {
   expect(screen.getByRole('button', { name: /light mode/i })).toBeInTheDocument();
   expect(localStorage.getItem('expense-tracker-theme')).toBe('dark');
 });
+
+
+

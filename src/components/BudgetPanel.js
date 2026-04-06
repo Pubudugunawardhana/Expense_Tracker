@@ -1,3 +1,5 @@
+import BudgetComparisonChart from './BudgetComparisonChart';
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -124,6 +126,12 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
             : 'Add a budget to see how your spending compares.'}
         </p>
       </div>
+
+      <BudgetComparisonChart
+        budget={budget}
+        progressModifier={progressModifier}
+        totalExpenseAmount={totalExpenseAmount}
+      />
     </section>
   );
 }
