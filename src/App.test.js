@@ -180,7 +180,27 @@ test('updates category budgets on the budgets page and shows the category compar
   );
 });
 
-test('submits feedback on the feedback page', async () => {
+test('supports previewing and selecting a feedback star rating', async () => {
+  renderApp(['/feedback']);
+
+  const oneStarButton = screen.getByRole('button', { name: /^1 star$/i });
+  const fourStarButton = screen.getByRole('button', { name: /^4 stars$/i });
+  const fiveStarButton = screen.getByRole('button', { name: /^5 stars$/i });
+
+  fireEvent.mouseEnter(fourStarButton);
+
+  expect(await screen.findByText('Previewing 4 out of 5 stars')).toBeInTheDocument();
+  expect(fourStarButton).toHaveClass('feedback-star-button-preview');
+
+  fireEvent.click(fourStarButton);
+
+  expect(await screen.findByText('4 out of 5 stars selected')).toBeInTheDocument();
+  expect(oneStarButton).toHaveClass('feedback-star-button-selected');
+  expect(fourStarButton).toHaveClass('feedback-star-button-selected');
+  expect(fiveStarButton).not.toHaveClass('feedback-star-button-selected');
+});
+
+test('submits feedback on the feedback page, saves it, and clears the form', async () => {
   renderApp(['/feedback']);
 
   expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
@@ -194,6 +214,17 @@ test('submits feedback on the feedback page', async () => {
   expect(await screen.findByText(/thanks for the feedback/i)).toBeInTheDocument();
   expect(screen.getByText(/4-star response was received successfully/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/your feedback/i)).toHaveValue('');
+  expect(screen.getByText(/choose a rating from 1 to 5 stars/i)).toBeInTheDocument();
+
+  const storedFeedback = JSON.parse(
+    localStorage.getItem('expense-tracker-feedback') || '[]'
+  );
+
+  expect(storedFeedback).toHaveLength(1);
+  expect(storedFeedback[0]).toMatchObject({
+    rating: 4,
+    feedback: 'The budget and chart pages are especially helpful.',
+  });
 });
 
 test('recalculates total spending when expenses change', async () => {
