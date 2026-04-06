@@ -1,4 +1,4 @@
-﻿import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 
@@ -36,6 +36,7 @@ test('renders navbar links, total spending, and budget panel on the home page', 
   expect(screen.getByRole('link', { name: /add expense/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /^budgets$/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /^summary$/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /^feedback$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^home$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /^budget$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /budget vs actual/i })).toBeInTheDocument();
@@ -177,6 +178,22 @@ test('updates category budgets on the budgets page and shows the category compar
   expect(localStorage.getItem('expense-tracker-category-budgets')).toContain(
     '"Food":100'
   );
+});
+
+test('submits feedback on the feedback page', async () => {
+  renderApp(['/feedback']);
+
+  expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /^4 stars$/i }));
+  fireEvent.change(screen.getByLabelText(/your feedback/i), {
+    target: { value: 'The budget and chart pages are especially helpful.' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /submit feedback/i }));
+
+  expect(await screen.findByText(/thanks for the feedback/i)).toBeInTheDocument();
+  expect(screen.getByText(/4-star response was received successfully/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/your feedback/i)).toHaveValue('');
 });
 
 test('recalculates total spending when expenses change', async () => {

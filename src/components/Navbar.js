@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { label: 'Add Expense', to: '/add', end: false },
   { label: 'Budgets', to: '/budgets', end: false },
   { label: 'Summary', to: '/summary', end: false },
+  { label: 'Feedback', to: '/feedback', end: false },
 ];
 
 function Navbar({ onNavigate }) {

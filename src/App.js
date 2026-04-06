@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AddExpensePage from './pages/AddExpensePage';
 import BudgetsPage from './pages/BudgetsPage';
+import FeedbackPage from './pages/FeedbackPage';
 import HomePage from './pages/HomePage';
 import SummaryPage from './pages/SummaryPage';
 import EXPENSE_CATEGORIES, { DEFAULT_CATEGORY } from './data/expenseCategories';
@@ -240,7 +241,7 @@ function App() {
 
           <p className="app-description">
             Track daily spending, manage budget targets, compare trends over time,
-            and review category budgets on a dedicated page.
+            review category budgets, and share quick feedback in one place.
           </p>
         </div>
 
@@ -281,6 +282,7 @@ function App() {
                 />
               }
             />
+            <Route path="/feedback" element={<FeedbackPage />} />
             <Route
               path="/summary"
               element={
