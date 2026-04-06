@@ -56,6 +56,50 @@ test('updates the budget and saves it to localStorage', () => {
   expect(localStorage.getItem('expense-tracker-budget')).toBe('1500');
 });
 
+test('changes the progress bar color as budget usage changes', async () => {
+  localStorage.setItem(
+    'expense-tracker-expenses',
+    JSON.stringify([
+      {
+        id: 'expense-1',
+        title: 'Groceries',
+        amount: 90,
+        category: 'Food',
+        date: '2026-04-04',
+      },
+    ])
+  );
+
+  renderApp();
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '150' },
+  });
+
+  expect(await screen.findByText('60%')).toBeInTheDocument();
+  expect(screen.getByTestId('budget-progress-fill')).toHaveClass(
+    'budget-progress-fill-safe'
+  );
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '100' },
+  });
+
+  expect(await screen.findByText('90%')).toBeInTheDocument();
+  expect(screen.getByTestId('budget-progress-fill')).toHaveClass(
+    'budget-progress-fill-warning'
+  );
+
+  fireEvent.change(screen.getByLabelText(/budget amount/i), {
+    target: { value: '80' },
+  });
+
+  expect(await screen.findByText('113%')).toBeInTheDocument();
+  expect(screen.getByTestId('budget-progress-fill')).toHaveClass(
+    'budget-progress-fill-over'
+  );
+});
+
 test('shows within budget, near limit, and over budget statuses', async () => {
   localStorage.setItem(
     'expense-tracker-expenses',

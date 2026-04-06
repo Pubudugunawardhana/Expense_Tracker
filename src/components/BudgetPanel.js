@@ -9,6 +9,8 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
   const remainingBudget = budget - totalExpenseAmount;
   const spentPercentage = budget > 0 ? (totalExpenseAmount / budget) * 100 : 0;
   const progressPercentage = Math.min(Math.max(spentPercentage, 0), 100);
+  const progressModifier =
+    spentPercentage > 100 ? 'over' : spentPercentage >= 70 ? 'warning' : 'safe';
   const budgetStatus =
     budget <= 0
       ? {
@@ -111,9 +113,8 @@ function BudgetPanel({ budget, onBudgetChange, totalExpenseAmount }) {
       <div className="budget-progress" aria-hidden="true">
         <div className="budget-progress-track">
           <span
-            className={`budget-progress-fill${
-              remainingBudget < 0 ? ' budget-progress-fill-over' : ''
-            }`}
+            className={`budget-progress-fill budget-progress-fill-${progressModifier}`}
+            data-testid="budget-progress-fill"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
