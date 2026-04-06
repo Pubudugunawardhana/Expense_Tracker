@@ -56,6 +56,20 @@ const getInitialFeedbackEntries = () => {
   }
 };
 
+const formatFeedbackDate = (dateValue) => {
+  if (!dateValue) {
+    return 'Date unavailable';
+  }
+
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'Date unavailable';
+  }
+
+  return parsedDate.toISOString().slice(0, 10);
+};
+
 function FeedbackPage() {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -239,6 +253,7 @@ function FeedbackPage() {
                   <span>{entry.rating}/5</span>
                 </div>
                 <p className="feedback-card-text">{entry.text}</p>
+                <p className="feedback-card-date">Date: {formatFeedbackDate(entry.date)}</p>
               </article>
             ))}
           </div>

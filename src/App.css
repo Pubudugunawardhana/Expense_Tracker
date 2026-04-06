@@ -1143,6 +1143,14 @@
   line-height: 1.6;
   transition: color 0.35s ease;
 }
+
+.feedback-card-date {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.35s ease;
+}
 .empty-state {
   padding: 28px 20px;
   border: 1px dashed var(--surface-border);

@@ -200,7 +200,7 @@ test('supports previewing and selecting a feedback star rating', async () => {
   expect(fiveStarButton).not.toHaveClass('feedback-star-button-selected');
 });
 
-test('loads previous feedback from localStorage, displays it as cards, and shows the average rating', async () => {
+test('loads previous feedback from localStorage, displays rating text and date in cards, and shows the average rating', async () => {
   localStorage.setItem(
     'feedback',
     JSON.stringify([
@@ -224,12 +224,13 @@ test('loads previous feedback from localStorage, displays it as cards, and shows
   expect(screen.getByText('The feedback page is clean and easy to use.')).toBeInTheDocument();
   expect(screen.getByText('5/5')).toBeInTheDocument();
   expect(screen.getByText('3/5')).toBeInTheDocument();
+  expect(screen.getAllByText('Date: 2026-04-06')).toHaveLength(2);
   expect(screen.getByText('2 entries')).toBeInTheDocument();
   expect(screen.getByText('Average Rating')).toBeInTheDocument();
   expect(screen.getByText('4.0 / 5')).toBeInTheDocument();
 });
 
-test('submits feedback on the feedback page, appends it under the feedback key, clears the form, and keeps existing entries', async () => {
+test('submits feedback on the feedback page, validates input, appends it under the feedback key, clears the form, and keeps existing entries', async () => {
   localStorage.setItem(
     'feedback',
     JSON.stringify([
@@ -243,10 +244,17 @@ test('submits feedback on the feedback page, appends it under the feedback key, 
 
   renderApp(['/feedback']);
 
-  expect(screen.getByRole('heading', { name: /^feedback$/i })).toBeInTheDocument();
-  expect(screen.getByText('5.0 / 5')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: /submit feedback/i }));
+  expect(
+    await screen.findByText(/please choose a star rating before submitting/i)
+  ).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /^4 stars$/i }));
+  fireEvent.click(screen.getByRole('button', { name: /submit feedback/i }));
+  expect(
+    await screen.findByText(/please share a few words of feedback before submitting/i)
+  ).toBeInTheDocument();
+
   fireEvent.change(screen.getByLabelText(/your feedback/i), {
     target: { value: 'The budget and chart pages are especially helpful.' },
   });
