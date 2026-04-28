@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
+const expenseRoutes = require('./routes/expenseRoutes');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -21,6 +23,8 @@ app.get('/api/health', (_request, response) => {
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
   });
 });
+
+app.use('/api/expenses', expenseRoutes);
 
 mongoose.connection.on('connected', () => {
   console.log('MongoDB Atlas connected successfully.');
