@@ -4,6 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const expenseRoutes = require('./routes/expenseRoutes');
+const budgetRoutes = require('./routes/budgetRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +26,7 @@ app.get('/api/health', (_request, response) => {
 });
 
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/budget', budgetRoutes);
 
 mongoose.connection.on('connected', () => {
   console.log('MongoDB Atlas connected successfully.');
