@@ -12,6 +12,7 @@ import {
   fetchExpenses,
   updateExpense,
 } from './api/expenses';
+import { fetchBudget, updateBudget } from './api/budget';
 import EXPENSE_CATEGORIES, { DEFAULT_CATEGORY } from './data/expenseCategories';
 import {
   createCategoryBudgetSummary,
@@ -37,35 +38,9 @@ const normalizeExpense = (expense) => {
   };
 };
 
-const getInitialBudget = () => {
-  try {
-    const savedBudget = localStorage.getItem(BUDGET_STORAGE_KEY);
-    const parsedBudget = Number(savedBudget);
+const getInitialBudget = () => 0;
 
-    return Number.isFinite(parsedBudget) && parsedBudget >= 0 ? parsedBudget : 0;
-  } catch (error) {
-    console.error('Failed to load budget from localStorage.', error);
-    return 0;
-  }
-};
-
-const getInitialCategoryBudgets = () => {
-  try {
-    const savedCategoryBudgets = localStorage.getItem(CATEGORY_BUDGETS_STORAGE_KEY);
-
-    if (!savedCategoryBudgets) {
-      return {};
-    }
-
-    return normalizeCategoryBudgets(
-      JSON.parse(savedCategoryBudgets),
-      EXPENSE_CATEGORIES
-    );
-  } catch (error) {
-    console.error('Failed to load category budgets from localStorage.', error);
-    return {};
-  }
-};
+const getInitialCategoryBudgets = () => ({});
 
 function App() {
   const navigate = useNavigate();
@@ -77,6 +52,8 @@ function App() {
   const [editingExpense, setEditingExpense] = useState(null);
   const [budget, setBudget] = useState(getInitialBudget);
   const [categoryBudgets, setCategoryBudgets] = useState(getInitialCategoryBudgets);
+  const [isLoadingBudgets, setIsLoadingBudgets] = useState(true);
+  const [budgetError, setBudgetError] = useState('');
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem(THEME_STORAGE_KEY) === 'dark'
@@ -108,23 +85,47 @@ function App() {
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(BUDGET_STORAGE_KEY, budget.toString());
-    } catch (error) {
-      console.error('Failed to save budget to localStorage.', error);
-    }
-  }, [budget]);
+    const loadBudgets = async () => {
+      setIsLoadingBudgets(true);
+      setBudgetError('');
+
+      try {
+        const budgetData = await fetchBudget();
+        setBudget(budgetData.monthlyBudget || 0);
+        const normalizedCategoryBudgets = normalizeCategoryBudgets(
+          budgetData.categoryBudgets || {},
+          EXPENSE_CATEGORIES
+        );
+        setCategoryBudgets(normalizedCategoryBudgets);
+      } catch (error) {
+        console.error('Failed to fetch budget from the API.', error);
+        setBudgetError(error.message || 'Failed to fetch budget.');
+      } finally {
+        setIsLoadingBudgets(false);
+      }
+    };
+
+    loadBudgets();
+  }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        CATEGORY_BUDGETS_STORAGE_KEY,
-        JSON.stringify(categoryBudgets)
-      );
-    } catch (error) {
-      console.error('Failed to save category budgets to localStorage.', error);
+    const saveBudget = async () => {
+      try {
+        await updateBudget({
+          monthlyBudget: budget,
+          categoryBudgets,
+        });
+      } catch (error) {
+        console.error('Failed to save budget to the API.', error);
+        setBudgetError(error.message || 'Failed to save budget.');
+      }
+    };
+
+    // Only save if budgets have been loaded (not on initial mount)
+    if (!isLoadingBudgets) {
+      saveBudget();
     }
-  }, [categoryBudgets]);
+  }, [budget, categoryBudgets, isLoadingBudgets]);
 
   useEffect(() => {
     try {
