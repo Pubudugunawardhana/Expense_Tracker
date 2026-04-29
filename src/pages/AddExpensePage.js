@@ -1,6 +1,12 @@
 import ExpenseForm from '../components/ExpenseForm';
 
-function AddExpensePage({ editingExpense, onCancelEdit, onSaveExpense }) {
+function AddExpensePage({
+  editingExpense,
+  expenseError,
+  isSavingExpense,
+  onCancelEdit,
+  onSaveExpense,
+}) {
   return (
     <section className="page-panel">
       <div className="page-intro">
@@ -14,6 +20,8 @@ function AddExpensePage({ editingExpense, onCancelEdit, onSaveExpense }) {
 
       <ExpenseForm
         editingExpense={editingExpense}
+        apiError={expenseError}
+        isSaving={isSavingExpense}
         onCancelEdit={onCancelEdit}
         onSaveExpense={onSaveExpense}
         showHeading={false}

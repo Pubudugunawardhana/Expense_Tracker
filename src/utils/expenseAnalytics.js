@@ -10,7 +10,8 @@ const parseExpenseDate = (value) => {
     return null;
   }
 
-  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const dateValue = value.slice(0, 10);
+  const match = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
   if (!match) {
     return null;

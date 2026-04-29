@@ -6,6 +6,12 @@ import BudgetsPage from './pages/BudgetsPage';
 import FeedbackPage from './pages/FeedbackPage';
 import HomePage from './pages/HomePage';
 import SummaryPage from './pages/SummaryPage';
+import {
+  createExpense,
+  deleteExpense,
+  fetchExpenses,
+  updateExpense,
+} from './api/expenses';
 import EXPENSE_CATEGORIES, { DEFAULT_CATEGORY } from './data/expenseCategories';
 import {
   createCategoryBudgetSummary,
@@ -15,7 +21,6 @@ import {
 import { normalizeExpenseDate } from './utils/expenseAnalytics';
 import './App.css';
 
-const STORAGE_KEY = 'expense-tracker-expenses';
 const THEME_STORAGE_KEY = 'expense-tracker-theme';
 const BUDGET_STORAGE_KEY = 'expense-tracker-budget';
 const CATEGORY_BUDGETS_STORAGE_KEY = 'expense-tracker-category-budgets';
@@ -24,7 +29,7 @@ const normalizeExpense = (expense) => {
   const numericAmount = Number(expense.amount);
 
   return {
-    id: expense.id,
+    id: expense.id || expense._id,
     title: expense.title,
     amount: Number.isFinite(numericAmount) ? numericAmount : 0,
     category: expense.category || DEFAULT_CATEGORY,
@@ -65,7 +70,10 @@ const getInitialCategoryBudgets = () => {
 function App() {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [isLoadingExpenses, setIsLoadingExpenses] = useState(true);
+  const [expenseError, setExpenseError] = useState('');
+  const [isSavingExpense, setIsSavingExpense] = useState(false);
+  const [deletingExpenseId, setDeletingExpenseId] = useState(null);
   const [editingExpense, setEditingExpense] = useState(null);
   const [budget, setBudget] = useState(getInitialBudget);
   const [categoryBudgets, setCategoryBudgets] = useState(getInitialCategoryBudgets);
@@ -81,30 +89,23 @@ function App() {
   });
 
   useEffect(() => {
-    try {
-      const savedExpenses = localStorage.getItem(STORAGE_KEY);
+    const loadExpenses = async () => {
+      setIsLoadingExpenses(true);
+      setExpenseError('');
 
-      if (savedExpenses) {
-        const parsedExpenses = JSON.parse(savedExpenses);
-
-        if (Array.isArray(parsedExpenses)) {
-          setExpenses(parsedExpenses.map(normalizeExpense));
-        }
+      try {
+        const apiExpenses = await fetchExpenses();
+        setExpenses(Array.isArray(apiExpenses) ? apiExpenses.map(normalizeExpense) : []);
+      } catch (error) {
+        console.error('Failed to fetch expenses from the API.', error);
+        setExpenseError(error.message || 'Failed to fetch expenses.');
+      } finally {
+        setIsLoadingExpenses(false);
       }
-    } catch (error) {
-      console.error('Failed to load expenses from localStorage.', error);
-    } finally {
-      setHasLoaded(true);
-    }
+    };
+
+    loadExpenses();
   }, []);
-
-  useEffect(() => {
-    if (!hasLoaded) {
-      return;
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
-  }, [expenses, hasLoaded]);
 
   useEffect(() => {
     try {
@@ -133,35 +134,68 @@ function App() {
     }
   }, [theme]);
 
-  const handleSaveExpense = (expenseToSave) => {
+  const handleSaveExpense = async (expenseToSave) => {
     const normalizedExpense = normalizeExpense(expenseToSave);
+    const expensePayload = {
+      title: normalizedExpense.title,
+      amount: normalizedExpense.amount,
+      category: normalizedExpense.category,
+      date: normalizedExpense.date,
+    };
 
-    setExpenses((currentExpenses) => {
-      const existingExpense = currentExpenses.some(
-        (expense) => expense.id === normalizedExpense.id
-      );
+    setIsSavingExpense(true);
+    setExpenseError('');
 
-      if (existingExpense) {
-        return currentExpenses.map((expense) =>
-          expense.id === normalizedExpense.id ? normalizedExpense : expense
+    try {
+      const savedExpense = editingExpense
+        ? await updateExpense(normalizedExpense.id, expensePayload)
+        : await createExpense(expensePayload);
+      const nextExpense = normalizeExpense(savedExpense);
+
+      setExpenses((currentExpenses) => {
+        const existingExpense = currentExpenses.some(
+          (expense) => expense.id === nextExpense.id
         );
-      }
 
-      return [normalizedExpense, ...currentExpenses];
-    });
+        if (existingExpense) {
+          return currentExpenses.map((expense) =>
+            expense.id === nextExpense.id ? nextExpense : expense
+          );
+        }
 
-    setEditingExpense(null);
-    navigate('/');
+        return [nextExpense, ...currentExpenses];
+      });
+
+      setEditingExpense(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to save expense through the API.', error);
+      setExpenseError(error.message || 'Failed to save expense.');
+    } finally {
+      setIsSavingExpense(false);
+    }
   };
 
-  const handleDeleteExpense = (expenseId) => {
-    setExpenses((currentExpenses) =>
-      currentExpenses.filter((expense) => expense.id !== expenseId)
-    );
+  const handleDeleteExpense = async (expenseId) => {
+    setDeletingExpenseId(expenseId);
+    setExpenseError('');
 
-    setEditingExpense((currentExpense) =>
-      currentExpense && currentExpense.id === expenseId ? null : currentExpense
-    );
+    try {
+      await deleteExpense(expenseId);
+
+      setExpenses((currentExpenses) =>
+        currentExpenses.filter((expense) => expense.id !== expenseId)
+      );
+
+      setEditingExpense((currentExpense) =>
+        currentExpense && currentExpense.id === expenseId ? null : currentExpense
+      );
+    } catch (error) {
+      console.error('Failed to delete expense through the API.', error);
+      setExpenseError(error.message || 'Failed to delete expense.');
+    } finally {
+      setDeletingExpenseId(null);
+    }
   };
 
   const handleEditExpense = (expenseId) => {
@@ -254,8 +288,11 @@ function App() {
               element={
                 <HomePage
                   budget={budget}
+                  deletingExpenseId={deletingExpenseId}
                   editingExpenseId={editingExpense?.id ?? null}
+                  expenseError={expenseError}
                   expenses={expenses}
+                  isLoadingExpenses={isLoadingExpenses}
                   onBudgetChange={handleBudgetChange}
                   onDeleteExpense={handleDeleteExpense}
                   onEditExpense={handleEditExpense}
@@ -268,6 +305,8 @@ function App() {
               element={
                 <AddExpensePage
                   editingExpense={editingExpense}
+                  expenseError={expenseError}
+                  isSavingExpense={isSavingExpense}
                   onCancelEdit={handleCancelEdit}
                   onSaveExpense={handleSaveExpense}
                 />

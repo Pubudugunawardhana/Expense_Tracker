@@ -1,6 +1,19 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
+import {
+  createExpense,
+  deleteExpense,
+  fetchExpenses,
+  updateExpense,
+} from './api/expenses';
+
+jest.mock('./api/expenses', () => ({
+  createExpense: jest.fn(),
+  deleteExpense: jest.fn(),
+  fetchExpenses: jest.fn(),
+  updateExpense: jest.fn(),
+}));
 
 if (!window.ResizeObserver) {
   window.ResizeObserver = class ResizeObserver {
@@ -25,8 +38,26 @@ const renderApp = (initialEntries = ['/']) =>
     </MemoryRouter>
   );
 
+let apiExpenses = [];
+
+const setApiExpenses = (expenses) => {
+  apiExpenses = expenses;
+  fetchExpenses.mockResolvedValue(apiExpenses);
+};
+
 beforeEach(() => {
   localStorage.clear();
+  jest.clearAllMocks();
+  setApiExpenses([]);
+  createExpense.mockImplementation(async (expense) => ({
+    _id: `expense-${apiExpenses.length + 1}`,
+    ...expense,
+  }));
+  updateExpense.mockImplementation(async (expenseId, expense) => ({
+    _id: expenseId,
+    ...expense,
+  }));
+  deleteExpense.mockResolvedValue({ message: 'Expense deleted successfully.' });
 });
 
 test('renders navbar links, total spending, and budget panel on the home page', () => {
@@ -60,18 +91,15 @@ test('updates the budget and saves it to localStorage', () => {
 });
 
 test('changes the progress bar color as budget usage changes', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Groceries',
-        amount: 90,
-        category: 'Food',
-        date: '2026-04-04',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Groceries',
+      amount: 90,
+      category: 'Food',
+      date: '2026-04-04',
+    },
+  ]);
 
   renderApp();
 
@@ -104,27 +132,26 @@ test('changes the progress bar color as budget usage changes', async () => {
 });
 
 test('shows within budget, near limit, and over budget statuses', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Groceries',
-        amount: 90,
-        category: 'Food',
-        date: '2026-04-04',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Groceries',
+      amount: 90,
+      category: 'Food',
+      date: '2026-04-04',
+    },
+  ]);
 
   renderApp();
+
+  expect(await screen.findByText('Groceries')).toBeInTheDocument();
 
   fireEvent.change(screen.getByLabelText(/budget amount/i), {
     target: { value: '200' },
   });
 
   expect(await screen.findByText('Within budget')).toBeInTheDocument();
-  expect(screen.getByText('45%')).toBeInTheDocument();
+  expect(await screen.findByText('45%')).toBeInTheDocument();
 
   fireEvent.change(screen.getByLabelText(/budget amount/i), {
     target: { value: '100' },
@@ -142,32 +169,29 @@ test('shows within budget, near limit, and over budget statuses', async () => {
 });
 
 test('updates category budgets on the budgets page and shows the category comparison chart', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Dinner',
-        amount: 90,
-        category: 'Food',
-        date: '2026-04-02',
-      },
-      {
-        id: 'expense-2',
-        title: 'Train',
-        amount: 35,
-        category: 'Travel',
-        date: '2026-04-03',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Dinner',
+      amount: 90,
+      category: 'Food',
+      date: '2026-04-02',
+    },
+    {
+      _id: 'expense-2',
+      title: 'Train',
+      amount: 35,
+      category: 'Travel',
+      date: '2026-04-03',
+    },
+  ]);
 
   renderApp(['/budgets']);
 
   expect(screen.getByRole('heading', { name: /^budgets$/i })).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: /category budgets/i })).toBeInTheDocument();
   expect(
-    screen.getByRole('heading', { name: /budget vs spending by category/i })
+    await screen.findByRole('heading', { name: /budget vs spending by category/i })
   ).toBeInTheDocument();
 
   fireEvent.change(screen.getByLabelText(/food budget/i), {
@@ -286,25 +310,22 @@ test('submits feedback on the feedback page, validates input, appends it under t
 });
 
 test('recalculates total spending when expenses change', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Lunch',
-        amount: 50,
-        category: 'Food',
-        date: '2026-04-04',
-      },
-      {
-        id: 'expense-2',
-        title: 'Taxi',
-        amount: 30,
-        category: 'Travel',
-        date: '2026-04-05',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Lunch',
+      amount: 50,
+      category: 'Food',
+      date: '2026-04-04',
+    },
+    {
+      _id: 'expense-2',
+      title: 'Taxi',
+      amount: 30,
+      category: 'Travel',
+      date: '2026-04-05',
+    },
+  ]);
 
   renderApp();
 
@@ -320,18 +341,15 @@ test('recalculates total spending when expenses change', async () => {
 });
 
 test('edits an existing expense from home and returns to the list', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Groceries',
-        amount: 45,
-        category: 'Food',
-        date: '2026-04-04',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Groceries',
+      amount: 45,
+      category: 'Food',
+      date: '2026-04-04',
+    },
+  ]);
 
   renderApp();
 
@@ -365,32 +383,29 @@ test('edits an existing expense from home and returns to the list', async () => 
 });
 
 test('shows the summary page with totals and chart controls', async () => {
-  localStorage.setItem(
-    'expense-tracker-expenses',
-    JSON.stringify([
-      {
-        id: 'expense-1',
-        title: 'Flight',
-        amount: 500,
-        category: 'Travel',
-        date: '2026-04-01',
-      },
-      {
-        id: 'expense-2',
-        title: 'Dinner',
-        amount: 80,
-        category: 'Food',
-        date: '2026-04-02',
-      },
-      {
-        id: 'expense-3',
-        title: 'Power',
-        amount: 120,
-        category: 'Bills',
-        date: '2026-03-28',
-      },
-    ])
-  );
+  setApiExpenses([
+    {
+      _id: 'expense-1',
+      title: 'Flight',
+      amount: 500,
+      category: 'Travel',
+      date: '2026-04-01',
+    },
+    {
+      _id: 'expense-2',
+      title: 'Dinner',
+      amount: 80,
+      category: 'Food',
+      date: '2026-04-02',
+    },
+    {
+      _id: 'expense-3',
+      title: 'Power',
+      amount: 120,
+      category: 'Bills',
+      date: '2026-03-28',
+    },
+  ]);
 
   renderApp(['/summary']);
 

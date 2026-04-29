@@ -4,15 +4,14 @@ import EXPENSE_CATEGORIES, {
 } from '../data/expenseCategories';
 import { normalizeExpenseDate } from '../utils/expenseAnalytics';
 
-const createExpenseId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-};
-
-function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading = true }) {
+function ExpenseForm({
+  apiError,
+  editingExpense,
+  isSaving,
+  onCancelEdit,
+  onSaveExpense,
+  showHeading = true,
+}) {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
@@ -63,7 +62,7 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
     }
 
     onSaveExpense({
-      id: editingExpense?.id ?? createExpenseId(),
+      id: editingExpense?.id,
       title: trimmedTitle,
       amount: numericAmount,
       category,
@@ -141,16 +140,21 @@ function ExpenseForm({ editingExpense, onCancelEdit, onSaveExpense, showHeading 
         </label>
       </div>
 
-      {error ? <p className="form-error">{error}</p> : null}
+      {error || apiError ? <p className="form-error">{error || apiError}</p> : null}
 
       <div className="form-actions">
-        <button className="primary-button" type="submit">
-          {editingExpense ? 'Update Expense' : 'Add Expense'}
+        <button className="primary-button" disabled={isSaving} type="submit">
+          {isSaving
+            ? 'Saving...'
+            : editingExpense
+              ? 'Update Expense'
+              : 'Add Expense'}
         </button>
 
         {editingExpense ? (
           <button
             className="secondary-button"
+            disabled={isSaving}
             type="button"
             onClick={onCancelEdit}
           >

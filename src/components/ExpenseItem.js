@@ -1,6 +1,12 @@
 import { formatExpenseDate } from '../utils/expenseAnalytics';
 
-function ExpenseItem({ expense, isEditing, onDeleteExpense, onEditExpense }) {
+function ExpenseItem({
+  expense,
+  isDeleting,
+  isEditing,
+  onDeleteExpense,
+  onEditExpense,
+}) {
   return (
     <li className={`expense-item${isEditing ? ' expense-item-editing' : ''}`}>
       <div className="expense-content">
@@ -20,6 +26,7 @@ function ExpenseItem({ expense, isEditing, onDeleteExpense, onEditExpense }) {
         <div className="expense-button-group">
           <button
             className="edit-button"
+            disabled={isDeleting}
             type="button"
             onClick={() => onEditExpense(expense.id)}
           >
@@ -27,10 +34,11 @@ function ExpenseItem({ expense, isEditing, onDeleteExpense, onEditExpense }) {
           </button>
           <button
             className="delete-button"
+            disabled={isDeleting}
             type="button"
             onClick={() => onDeleteExpense(expense.id)}
           >
-            Delete
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </div>

@@ -3,8 +3,11 @@ import ExpenseList from '../components/ExpenseList';
 
 function HomePage({
   budget,
+  deletingExpenseId,
   editingExpenseId,
+  expenseError,
   expenses,
+  isLoadingExpenses,
   onBudgetChange,
   onDeleteExpense,
   onEditExpense,
@@ -35,8 +38,11 @@ function HomePage({
       />
 
       <ExpenseList
+        deletingExpenseId={deletingExpenseId}
         editingExpenseId={editingExpenseId}
+        error={expenseError}
         expenses={expenses}
+        isLoading={isLoadingExpenses}
         onDeleteExpense={onDeleteExpense}
         onEditExpense={onEditExpense}
       />

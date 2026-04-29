@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A React expense tracker built with functional components, hooks, and React Router. The app lets users browse their expense list on a home page, add or edit expenses on a dedicated form page, review totals on a summary page, and persist both data and theme preference with `localStorage`.
+A React expense tracker built with functional components, hooks, and React Router. The app lets users browse their expense list on a home page, add or edit expenses through the backend API, review totals on a summary page, and persist theme and budget preferences with `localStorage`.
 
 ## Features
 
@@ -10,9 +10,9 @@ A React expense tracker built with functional components, hooks, and React Route
 - Summary page for total spending and category breakdowns
 - Navbar with links between all pages
 - Dark mode toggle with saved theme preference
-- Add, edit, and delete expenses with unique IDs
+- Fetch, add, edit, and delete expenses through `/api/expenses`
 - Validate that the title is not empty and the amount is greater than 0
-- Save and load expenses with `localStorage`
+- Save theme, budget, and feedback preferences with `localStorage`
 
 ## File Structure
 
@@ -50,7 +50,14 @@ src/
    npm start
    ```
 
-3. Open `http://localhost:3000` in your browser.
+3. Start the backend API from the `server` folder:
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+4. Open `http://localhost:3000` in your browser.
 
 ## Available Scripts
 
