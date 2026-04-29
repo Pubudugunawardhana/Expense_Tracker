@@ -5,6 +5,8 @@ import AddExpensePage from './pages/AddExpensePage';
 import BudgetsPage from './pages/BudgetsPage';
 import FeedbackPage from './pages/FeedbackPage';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import SummaryPage from './pages/SummaryPage';
 import {
   createExpense,
@@ -20,6 +22,7 @@ import {
   normalizeCategoryBudgets,
 } from './utils/categoryBudgets';
 import { normalizeExpenseDate } from './utils/expenseAnalytics';
+import { useAuth } from './context/AuthContext';
 import './App.css';
 
 const THEME_STORAGE_KEY = 'expense-tracker-theme';
@@ -44,6 +47,7 @@ const getInitialCategoryBudgets = () => ({});
 
 function App() {
   const navigate = useNavigate();
+  const { user, isLoadingAuth, logout } = useAuth();
   const [expenses, setExpenses] = useState([]);
   const [isLoadingExpenses, setIsLoadingExpenses] = useState(true);
   const [expenseError, setExpenseError] = useState('');
@@ -253,6 +257,30 @@ function App() {
     spendingByCategory: totalsByCategory,
   });
 
+  // Show loading screen while restoring session
+  if (isLoadingAuth) {
+    return (
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        minHeight: '100vh', background: '#0a0f1e', color: '#7cc7ff',
+        fontSize: '1.1rem', fontFamily: 'Inter, system-ui, sans-serif'
+      }}>
+        <span>Loading...</span>
+      </div>
+    );
+  }
+
+  // Public routes (no auth needed)
+  if (!user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="*" element={<Navigate replace to="/login" />} />
+      </Routes>
+    );
+  }
+
   return (
     <main className={`app-shell theme-${theme}`}>
       <section className="expense-card">
@@ -263,15 +291,35 @@ function App() {
               <h1>Expense Tracker</h1>
             </div>
 
-            <button
-              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-              aria-pressed={theme === 'dark'}
-              className="theme-toggle"
-              type="button"
-              onClick={handleToggleTheme}
-            >
-              {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {user && (
+                <>
+                  <div className="auth-user-avatar" title={user.email}>
+                    {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <span style={{ fontSize: '0.88rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {user.name}
+                  </span>
+                  <button
+                    id="logout-btn"
+                    className="auth-logout-btn"
+                    type="button"
+                    onClick={() => { logout(); navigate('/login'); }}
+                  >
+                    Sign Out
+                  </button>
+                </>
+              )}
+              <button
+                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                aria-pressed={theme === 'dark'}
+                className="theme-toggle"
+                type="button"
+                onClick={handleToggleTheme}
+              >
+                {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </button>
+            </div>
           </div>
 
           <p className="app-description">
