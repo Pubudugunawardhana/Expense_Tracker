@@ -1,16 +1,21 @@
 const express = require('express');
 const Budget = require('../models/Budget');
+const protect = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// GET current budget
-router.get('/', async (_request, response) => {
-  try {
-    let budget = await Budget.findOne();
+// All budget routes require authentication
+router.use(protect);
 
-    // If no budget exists, create a default one
+// GET /api/budget — get logged-in user's budget
+router.get('/', async (request, response) => {
+  try {
+    let budget = await Budget.findOne({ userId: request.userId });
+
+    // Create a default budget for this user if none exists
     if (!budget) {
       budget = await Budget.create({
+        userId: request.userId,
         monthlyBudget: 0,
         categoryBudgets: {},
       });
@@ -28,15 +33,16 @@ router.get('/', async (_request, response) => {
   }
 });
 
-// POST/UPDATE budget
+// POST /api/budget — save/update logged-in user's budget
 router.post('/', async (request, response) => {
   try {
     const { monthlyBudget, categoryBudgets } = request.body;
 
-    let budget = await Budget.findOne();
+    let budget = await Budget.findOne({ userId: request.userId });
 
     if (!budget) {
       budget = await Budget.create({
+        userId: request.userId,
         monthlyBudget: monthlyBudget || 0,
         categoryBudgets: categoryBudgets || {},
       });
