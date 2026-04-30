@@ -26,8 +26,6 @@ import { useAuth } from './context/AuthContext';
 import './App.css';
 
 const THEME_STORAGE_KEY = 'expense-tracker-theme';
-const BUDGET_STORAGE_KEY = 'expense-tracker-budget';
-const CATEGORY_BUDGETS_STORAGE_KEY = 'expense-tracker-category-budgets';
 
 const normalizeExpense = (expense) => {
   const numericAmount = Number(expense.amount);
@@ -57,7 +55,7 @@ function App() {
   const [budget, setBudget] = useState(getInitialBudget);
   const [categoryBudgets, setCategoryBudgets] = useState(getInitialCategoryBudgets);
   const [isLoadingBudgets, setIsLoadingBudgets] = useState(true);
-  const [budgetError, setBudgetError] = useState('');
+  const [_budgetError, setBudgetError] = useState(''); // eslint-disable-line no-unused-vars
   const [theme, setTheme] = useState(() => {
     try {
       return localStorage.getItem(THEME_STORAGE_KEY) === 'dark'
