@@ -70,6 +70,11 @@ function App() {
   });
 
   useEffect(() => {
+    if (!user) {
+      setExpenses([]);
+      return;
+    }
+
     const loadExpenses = async () => {
       setIsLoadingExpenses(true);
       setExpenseError('');
@@ -86,9 +91,15 @@ function App() {
     };
 
     loadExpenses();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (!user) {
+      setBudget(getInitialBudget());
+      setCategoryBudgets(getInitialCategoryBudgets());
+      return;
+    }
+
     const loadBudgets = async () => {
       setIsLoadingBudgets(true);
       setBudgetError('');
@@ -110,7 +121,7 @@ function App() {
     };
 
     loadBudgets();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const saveBudget = async () => {
@@ -125,11 +136,11 @@ function App() {
       }
     };
 
-    // Only save if budgets have been loaded (not on initial mount)
-    if (!isLoadingBudgets) {
+    // Only save if budgets have been loaded and user is authenticated
+    if (!isLoadingBudgets && user) {
       saveBudget();
     }
-  }, [budget, categoryBudgets, isLoadingBudgets]);
+  }, [budget, categoryBudgets, isLoadingBudgets, user]);
 
   useEffect(() => {
     try {
