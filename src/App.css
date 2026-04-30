@@ -1,3 +1,5 @@
+@import './styles/auth.css';
+
 .app-shell {
   --bg-top: rgba(62, 146, 204, 0.18);
   --bg-start: #f3f7fb;
