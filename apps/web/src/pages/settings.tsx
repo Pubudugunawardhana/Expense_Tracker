@@ -26,6 +26,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -85,49 +87,72 @@ function ProfileCard() {
   const update = useUpdateProfile();
   const [name, setName] = useState(user?.name ?? '');
   if (!user) return null;
+  const initials = user.name
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>
-        <CardDescription>
-          {user.email}
-          {user.googleLinked && ' · Google account linked'}
-        </CardDescription>
+        <CardDescription>Your personal details and display currency.</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4 sm:grid-cols-2">
-        <Field label="Name" htmlFor="name">
-          <Input id="name" value={name} onChange={(event) => setName(event.target.value)} />
-        </Field>
-        <Field
-          label="Base currency"
-          hint="Totals, budgets and charts use this currency. Changing it converts existing data at today's rates."
-        >
-          <Select
-            value={user.baseCurrency}
-            onValueChange={(value) =>
-              update.mutate(
-                { baseCurrency: value as Currency },
-                {
-                  onSuccess: () => toast.success(`Base currency changed to ${value}`),
-                  onError: (error) => toast.error(error.message),
-                },
-              )
-            }
-            disabled={update.isPending}
+      <CardContent className="space-y-6">
+        <div className="flex items-center gap-4 rounded-xl border bg-muted/40 p-4">
+          <Avatar className="size-14">
+            {user.avatar && <AvatarImage src={user.avatar} alt="" referrerPolicy="no-referrer" />}
+            <AvatarFallback className="bg-primary/15 text-lg font-semibold text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <div className="truncate font-semibold">{user.name}</div>
+            <div className="truncate text-sm text-muted-foreground">{user.email}</div>
+          </div>
+          {user.googleLinked && (
+            <Badge variant="secondary" className="hidden sm:inline-flex">
+              Google linked
+            </Badge>
+          )}
+        </div>
+
+        <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+          <Field label="Name" htmlFor="name">
+            <Input id="name" value={name} onChange={(event) => setName(event.target.value)} />
+          </Field>
+          <Field
+            label="Base currency"
+            hint="Used for totals, budgets and charts. Existing amounts are converted at today's rates."
           >
-            <SelectTrigger className="w-full" aria-label="Base currency">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {CURRENCIES.map((currency) => (
-                <SelectItem key={currency} value={currency}>
-                  {currency}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+            <Select
+              value={user.baseCurrency}
+              onValueChange={(value) =>
+                update.mutate(
+                  { baseCurrency: value as Currency },
+                  {
+                    onSuccess: () => toast.success(`Base currency changed to ${value}`),
+                    onError: (error) => toast.error(error.message),
+                  },
+                )
+              }
+              disabled={update.isPending}
+            >
+              <SelectTrigger className="w-full" aria-label="Base currency">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {CURRENCIES.map((currency) => (
+                  <SelectItem key={currency} value={currency}>
+                    {currency}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        </div>
       </CardContent>
       <CardFooter className="justify-end">
         <Button

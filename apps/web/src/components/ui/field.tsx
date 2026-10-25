@@ -19,7 +19,8 @@ export function Field({
   children: ReactNode;
 }) {
   return (
-    <div className={cn('grid gap-2', className)}>
+    // content-start keeps label + control at the top when a neighbouring field is taller.
+    <div className={cn('grid content-start gap-2', className)}>
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
       {error ? (
