@@ -25,17 +25,60 @@ import { useAuth } from '@/hooks/use-auth';
 import { usePrefs } from '@/lib/prefs-store';
 
 const FEATURES = [
-  { icon: Sparkles, title: 'AI quick add', body: 'Type “lunch 1500 yesterday” and Claude fills in the amount, category and date for you.' },
-  { icon: Camera, title: 'Receipt scanning', body: 'Snap a photo of a bill — the merchant, total and date are extracted automatically.' },
-  { icon: Target, title: 'Smart budgets', body: 'Monthly and per-category limits with early warnings before you overspend.' },
-  { icon: Globe2, title: 'Multi-currency', body: 'Log spending in LKR, USD, EUR and more. Everything converts to your base currency.' },
-  { icon: Repeat, title: 'Recurring bills', body: 'Rent, subscriptions and salary are recorded automatically on schedule.' },
-  { icon: FileDown, title: 'Reports & export', body: 'Beautiful charts, PDF statements and CSV exports for any month.' },
-  { icon: Smartphone, title: 'Installable PWA', body: 'Add it to your home screen and check your numbers even when offline.' },
-  { icon: ShieldCheck, title: 'Secure by design', body: 'httpOnly refresh tokens, rate limiting, hashed secrets and Google sign-in.' },
+  {
+    icon: Sparkles,
+    title: 'AI quick add',
+    body: 'Type “lunch 1500 yesterday” and Claude fills in the amount, category and date for you.',
+  },
+  {
+    icon: Camera,
+    title: 'Receipt scanning',
+    body: 'Snap a photo of a bill — the merchant, total and date are extracted automatically.',
+  },
+  {
+    icon: Target,
+    title: 'Smart budgets',
+    body: 'Monthly and per-category limits with early warnings before you overspend.',
+  },
+  {
+    icon: Globe2,
+    title: 'Multi-currency',
+    body: 'Log spending in LKR, USD, EUR and more. Everything converts to your base currency.',
+  },
+  {
+    icon: Repeat,
+    title: 'Recurring bills',
+    body: 'Rent, subscriptions and salary are recorded automatically on schedule.',
+  },
+  {
+    icon: FileDown,
+    title: 'Reports & export',
+    body: 'Beautiful charts, PDF statements and CSV exports for any month.',
+  },
+  {
+    icon: Smartphone,
+    title: 'Installable PWA',
+    body: 'Add it to your home screen and check your numbers even when offline.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Secure by design',
+    body: 'httpOnly refresh tokens, rate limiting, hashed secrets and Google sign-in.',
+  },
 ];
 
-const STACK = ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'shadcn/ui', 'TanStack Query', 'Express 5', 'MongoDB', 'Zod', 'Claude AI'];
+const STACK = [
+  'React 19',
+  'TypeScript',
+  'Vite',
+  'Tailwind CSS',
+  'shadcn/ui',
+  'TanStack Query',
+  'Express 5',
+  'MongoDB',
+  'Zod',
+  'Claude AI',
+];
 
 /** A lightweight, code-drawn preview of the dashboard for the hero section. */
 function DashboardPreview() {
@@ -70,7 +113,10 @@ function DashboardPreview() {
           <div className="flex items-center gap-1.5 font-medium text-primary">
             <Sparkles className="size-3.5" /> AI insight
           </div>
-          <p className="text-muted-foreground">Food spending is 18% lower than last month — nice work! You're on track to save LKR 45,000.</p>
+          <p className="text-muted-foreground">
+            Food spending is 18% lower than last month — nice work! You're on track to save LKR
+            45,000.
+          </p>
         </div>
       </div>
     </div>
@@ -106,7 +152,12 @@ export function LandingPage() {
       <header className="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
         <Wordmark />
         <nav className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle theme">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle theme"
+          >
             <Sun className="dark:hidden" />
             <Moon className="hidden dark:block" />
           </Button>
@@ -129,7 +180,11 @@ export function LandingPage() {
 
       <main className="relative">
         <section className="mx-auto max-w-6xl px-4 pt-12 pb-20 text-center sm:px-6 sm:pt-20">
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <span className="inline-flex items-center gap-2 rounded-full border bg-card/60 px-3 py-1 text-xs font-medium backdrop-blur">
               <Sparkles className="size-3.5 text-primary" /> Now with Claude-powered insights
             </span>
@@ -137,22 +192,34 @@ export function LandingPage() {
               Know where every <span className="text-gradient">rupee</span> goes.
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
-              Spendly is a modern expense tracker with AI quick-add, receipt scanning, smart budgets and multi-currency support.
+              Spendly is a modern expense tracker with AI quick-add, receipt scanning, smart budgets
+              and multi-currency support.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               {config?.features.demo && !signedIn && (
-                <Button size="lg" onClick={tryDemo} disabled={demoLoading} className="shadow-lg shadow-primary/25">
+                <Button
+                  size="lg"
+                  onClick={tryDemo}
+                  disabled={demoLoading}
+                  className="shadow-lg shadow-primary/25"
+                >
                   {demoLoading ? <Loader2 className="animate-spin" /> : <PlayCircle />}
                   Try the live demo
                 </Button>
               )}
-              <Button size="lg" variant={config?.features.demo && !signedIn ? 'outline' : 'default'} asChild>
+              <Button
+                size="lg"
+                variant={config?.features.demo && !signedIn ? 'outline' : 'default'}
+                asChild
+              >
                 <Link to={signedIn ? '/dashboard' : '/register'}>
                   {signedIn ? 'Go to dashboard' : 'Create a free account'} <ArrowRight />
                 </Link>
               </Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">No credit card. The demo resets every night.</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              No credit card. The demo resets every night.
+            </p>
           </motion.div>
 
           <motion.div
@@ -167,8 +234,12 @@ export function LandingPage() {
 
         <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Everything you need to master your money</h2>
-            <p className="mt-3 text-muted-foreground">Built for real life in Sri Lanka and beyond.</p>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Everything you need to master your money
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              Built for real life in Sri Lanka and beyond.
+            </p>
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map((feature, index) => (
@@ -192,7 +263,9 @@ export function LandingPage() {
 
         <section className="border-y bg-card/50 py-10">
           <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-            <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">Built with</p>
+            <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+              Built with
+            </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {STACK.map((item) => (
                 <span key={item} className="rounded-full border bg-background px-3 py-1 text-sm">

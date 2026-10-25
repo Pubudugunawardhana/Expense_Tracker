@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
-import { ArrowDownUp, ChevronLeft, ChevronRight, Download, Plus, Receipt, Search, Trash2, X } from 'lucide-react';
+import {
+  ArrowDownUp,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Plus,
+  Receipt,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 import type { TransactionQuery, TransactionType } from '@spendly/shared';
 import { EmptyState, PageHeader } from '@/components/common';
 import { AiAssist } from '@/components/transactions/ai-assist';
-import { GroupedTransactionList, TransactionListSkeleton } from '@/components/transactions/transaction-list';
+import {
+  GroupedTransactionList,
+  TransactionListSkeleton,
+} from '@/components/transactions/transaction-list';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,9 +34,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useCategories, useCategoryMap, useDeleteTransactions, useServerConfig, useTransactions } from '@/hooks/api';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  useCategories,
+  useCategoryMap,
+  useDeleteTransactions,
+  useServerConfig,
+  useTransactions,
+} from '@/hooks/api';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { downloadFile } from '@/lib/api';
 import { useAuthStore } from '@/lib/auth-store';
@@ -96,8 +128,8 @@ export function TransactionsPage() {
   };
 
   const exportCsv = () =>
-    downloadFile(`/transactions/export.csv?month=${month}`, `spendly-${month}.csv`).catch((error: Error) =>
-      toast.error(error.message),
+    downloadFile(`/transactions/export.csv?month=${month}`, `spendly-${month}.csv`).catch(
+      (error: Error) => toast.error(error.message),
     );
 
   const clearFilters = () => {
@@ -138,7 +170,13 @@ export function TransactionsPage() {
         <div className="flex flex-col gap-2 border-b p-3 md:flex-row md:items-center">
           <div className="relative flex-1">
             <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search title or note…" className="pl-9" aria-label="Search transactions" />
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search title or note…"
+              className="pl-9"
+              aria-label="Search transactions"
+            />
           </div>
           <div className="grid grid-cols-3 gap-2 md:flex">
             <Select value={type} onValueChange={(value) => setType(value as typeof type)}>
@@ -187,20 +225,31 @@ export function TransactionsPage() {
             <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>
               Clear
             </Button>
-            <Button variant="destructive" size="sm" className="ml-auto" onClick={() => setConfirmOpen(true)}>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="ml-auto"
+              onClick={() => setConfirmOpen(true)}
+            >
               <Trash2 /> Delete
             </Button>
           </div>
         )}
 
-        <CardContent className={cn('p-0 transition-opacity', isFetching && !isLoading && 'opacity-60')}>
+        <CardContent
+          className={cn('p-0 transition-opacity', isFetching && !isLoading && 'opacity-60')}
+        >
           {isLoading ? (
             <TransactionListSkeleton rows={8} />
           ) : items.length === 0 ? (
             <EmptyState
               icon={Receipt}
               title={filtersActive ? 'No matching transactions' : 'Nothing here yet'}
-              description={filtersActive ? 'Try a different search or filter.' : `No transactions recorded in ${formatMonth(month)}.`}
+              description={
+                filtersActive
+                  ? 'Try a different search or filter.'
+                  : `No transactions recorded in ${formatMonth(month)}.`
+              }
               action={
                 filtersActive ? (
                   <Button variant="outline" onClick={clearFilters}>
@@ -217,7 +266,11 @@ export function TransactionsPage() {
             <>
               {/* Mobile: grouped list */}
               <div className="p-2 md:hidden">
-                <GroupedTransactionList transactions={items} categories={categories} baseCurrency={currency} />
+                <GroupedTransactionList
+                  transactions={items}
+                  categories={categories}
+                  baseCurrency={currency}
+                />
               </div>
               {/* Desktop: table */}
               <Table className="hidden md:table">
@@ -226,7 +279,9 @@ export function TransactionsPage() {
                     <TableHead className="w-10 pl-4">
                       <Checkbox
                         checked={allSelected}
-                        onCheckedChange={(checked) => setSelected(checked ? new Set(items.map((tx) => tx.id)) : new Set())}
+                        onCheckedChange={(checked) =>
+                          setSelected(checked ? new Set(items.map((tx) => tx.id)) : new Set())
+                        }
                         aria-label="Select all"
                       />
                     </TableHead>
@@ -240,16 +295,29 @@ export function TransactionsPage() {
                   {items.map((tx) => {
                     const category = categories.get(tx.categoryId);
                     return (
-                      <TableRow key={tx.id} data-state={selected.has(tx.id) ? 'selected' : undefined} className="cursor-pointer" onClick={() => openEdit(tx)}>
+                      <TableRow
+                        key={tx.id}
+                        data-state={selected.has(tx.id) ? 'selected' : undefined}
+                        className="cursor-pointer"
+                        onClick={() => openEdit(tx)}
+                      >
                         <TableCell className="pl-4" onClick={(event) => event.stopPropagation()}>
-                          <Checkbox checked={selected.has(tx.id)} onCheckedChange={() => toggle(tx.id)} aria-label={`Select ${tx.title}`} />
+                          <Checkbox
+                            checked={selected.has(tx.id)}
+                            onCheckedChange={() => toggle(tx.id)}
+                            aria-label={`Select ${tx.title}`}
+                          />
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <CategoryBadge category={category} size="sm" />
                             <div className="min-w-0">
                               <div className="truncate font-medium">{tx.title}</div>
-                              {tx.note && <div className="max-w-xs truncate text-xs text-muted-foreground">{tx.note}</div>}
+                              {tx.note && (
+                                <div className="max-w-xs truncate text-xs text-muted-foreground">
+                                  {tx.note}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </TableCell>
@@ -258,14 +326,23 @@ export function TransactionsPage() {
                             {category?.name ?? '—'}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{formatDateKey(tx.date)}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDateKey(tx.date)}
+                        </TableCell>
                         <TableCell className="pr-4 text-right">
-                          <div className={cn('font-semibold tabular', tx.type === 'income' && 'text-income')}>
+                          <div
+                            className={cn(
+                              'font-semibold tabular',
+                              tx.type === 'income' && 'text-income',
+                            )}
+                          >
                             {tx.type === 'income' ? '+' : '−'}
                             {formatMoney(tx.amount, tx.currency)}
                           </div>
                           {tx.currency !== currency && (
-                            <div className="text-xs text-muted-foreground tabular">≈ {formatMoney(tx.baseAmount, currency)}</div>
+                            <div className="text-xs text-muted-foreground tabular">
+                              ≈ {formatMoney(tx.baseAmount, currency)}
+                            </div>
                           )}
                         </TableCell>
                       </TableRow>
@@ -283,10 +360,20 @@ export function TransactionsPage() {
               Page {data.page} of {data.pages}
             </span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={page <= 1}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page <= 1}
+              >
                 <ChevronLeft /> Previous
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)} disabled={page >= data.pages}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= data.pages}
+              >
                 Next <ChevronRight />
               </Button>
             </div>
@@ -302,7 +389,10 @@ export function TransactionsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={deleteSelected} className="bg-destructive text-white hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={deleteSelected}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

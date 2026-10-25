@@ -5,9 +5,19 @@ import { BudgetBar, BudgetStatusLabel } from '@/components/budget-bar';
 import { CashFlowChart, CategoryBreakdown, SeriesLegend } from '@/components/charts';
 import { Delta, EmptyState, StatCard } from '@/components/common';
 import { InsightsCard } from '@/components/insights-card';
-import { GroupedTransactionList, TransactionListSkeleton } from '@/components/transactions/transaction-list';
+import {
+  GroupedTransactionList,
+  TransactionListSkeleton,
+} from '@/components/transactions/transaction-list';
 import { Button } from '@/components/ui/button';
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBudget, useCategoryMap, useSummary, useTransactions } from '@/hooks/api';
 import { useAuthStore } from '@/lib/auth-store';
@@ -53,7 +63,9 @@ export function DashboardPage() {
           tone="income"
           loading={isLoading}
           value={formatMoney(summary?.income ?? 0, currency)}
-          footer={summary && <Delta change={percentChange(summary.income, summary.previous.income)} />}
+          footer={
+            summary && <Delta change={percentChange(summary.income, summary.previous.income)} />
+          }
         />
         <StatCard
           label="Expenses"
@@ -61,7 +73,14 @@ export function DashboardPage() {
           tone="expense"
           loading={isLoading}
           value={formatMoney(summary?.expense ?? 0, currency)}
-          footer={summary && <Delta change={percentChange(summary.expense, summary.previous.expense)} goodWhenUp={false} />}
+          footer={
+            summary && (
+              <Delta
+                change={percentChange(summary.expense, summary.previous.expense)}
+                goodWhenUp={false}
+              />
+            )
+          }
         />
         <StatCard
           label="Net balance"
@@ -69,7 +88,11 @@ export function DashboardPage() {
           tone="primary"
           loading={isLoading}
           value={formatMoney(summary?.net ?? 0, currency, { signed: true })}
-          footer={<span className="text-xs text-muted-foreground">{summary?.transactionCount ?? 0} transactions</span>}
+          footer={
+            <span className="text-xs text-muted-foreground">
+              {summary?.transactionCount ?? 0} transactions
+            </span>
+          }
         />
         <StatCard
           label="Savings rate"
@@ -90,14 +113,22 @@ export function DashboardPage() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            {isLoading || !summary ? <Skeleton className="h-[260px] w-full" /> : <CashFlowChart daily={summary.daily} currency={currency} />}
+            {isLoading || !summary ? (
+              <Skeleton className="h-[260px] w-full" />
+            ) : (
+              <CashFlowChart daily={summary.daily} currency={currency} />
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>Monthly budget</CardTitle>
-            <CardDescription>{progress.status === 'none' ? 'No budget set yet' : `${formatMoney(progress.budget, currency)} limit`}</CardDescription>
+            <CardDescription>
+              {progress.status === 'none'
+                ? 'No budget set yet'
+                : `${formatMoney(progress.budget, currency)} limit`}
+            </CardDescription>
             <CardAction>
               <Button variant="ghost" size="icon" asChild aria-label="Edit budgets">
                 <Link to="/budgets">
@@ -123,7 +154,9 @@ export function DashboardPage() {
               <>
                 <div className="flex items-end justify-between">
                   <div>
-                    <div className="text-3xl font-bold tracking-tight tabular">{formatPercent(progress.percent / 100)}</div>
+                    <div className="text-3xl font-bold tracking-tight tabular">
+                      {formatPercent(progress.percent / 100)}
+                    </div>
                     <div className="text-sm text-muted-foreground">of budget used</div>
                   </div>
                   <BudgetStatusLabel status={progress.status} />
@@ -132,11 +165,17 @@ export function DashboardPage() {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="rounded-lg bg-muted/60 p-3">
                     <div className="text-muted-foreground">Spent</div>
-                    <div className="font-semibold tabular">{formatMoney(progress.spent, currency)}</div>
+                    <div className="font-semibold tabular">
+                      {formatMoney(progress.spent, currency)}
+                    </div>
                   </div>
                   <div className="rounded-lg bg-muted/60 p-3">
-                    <div className="text-muted-foreground">{progress.remaining >= 0 ? 'Left' : 'Over by'}</div>
-                    <div className="font-semibold tabular">{formatMoney(Math.abs(progress.remaining), currency)}</div>
+                    <div className="text-muted-foreground">
+                      {progress.remaining >= 0 ? 'Left' : 'Over by'}
+                    </div>
+                    <div className="font-semibold tabular">
+                      {formatMoney(Math.abs(progress.remaining), currency)}
+                    </div>
                   </div>
                 </div>
               </>
@@ -159,7 +198,11 @@ export function DashboardPage() {
             {recentLoading ? (
               <TransactionListSkeleton />
             ) : recent?.items.length ? (
-              <GroupedTransactionList transactions={recent.items} categories={categories} baseCurrency={currency} />
+              <GroupedTransactionList
+                transactions={recent.items}
+                categories={categories}
+                baseCurrency={currency}
+              />
             ) : (
               <EmptyState
                 icon={Plus}
@@ -180,9 +223,16 @@ export function DashboardPage() {
             </CardHeader>
             <CardContent>
               {summary?.byCategory.length ? (
-                <CategoryBreakdown totals={summary.byCategory} categories={categories} currency={currency} limit={5} />
+                <CategoryBreakdown
+                  totals={summary.byCategory}
+                  categories={categories}
+                  currency={currency}
+                  limit={5}
+                />
               ) : (
-                <p className="text-sm text-muted-foreground">No spending recorded for this month.</p>
+                <p className="text-sm text-muted-foreground">
+                  No spending recorded for this month.
+                </p>
               )}
             </CardContent>
           </Card>

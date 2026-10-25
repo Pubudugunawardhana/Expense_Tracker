@@ -91,16 +91,45 @@ export function CashFlowChart({ daily, currency }: { daily: DailyPoint[]; curren
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-        <XAxis dataKey="date" {...axisProps} tickFormatter={(value: string) => value.slice(8)} minTickGap={16} />
-        <YAxis {...axisProps} width={56} tickFormatter={(value: number) => compactMoney(value, currency)} />
+        <XAxis
+          dataKey="date"
+          {...axisProps}
+          tickFormatter={(value: string) => value.slice(8)}
+          minTickGap={16}
+        />
+        <YAxis
+          {...axisProps}
+          width={56}
+          tickFormatter={(value: number) => compactMoney(value, currency)}
+        />
         <Tooltip
           cursor={{ stroke: 'var(--muted-foreground)', strokeDasharray: '4 4' }}
           content={(props) => (
-            <ChartTooltip {...props} currency={currency} formatLabel={(label) => `Up to ${formatDateKey(label, 'MMM d')}`} />
+            <ChartTooltip
+              {...props}
+              currency={currency}
+              formatLabel={(label) => `Up to ${formatDateKey(label, 'MMM d')}`}
+            />
           )}
         />
-        <Area type="monotone" dataKey="income" name="Income" stroke={INCOME} strokeWidth={2} fill="url(#fill-income)" activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }} />
-        <Area type="monotone" dataKey="expense" name="Expenses" stroke={EXPENSE} strokeWidth={2} fill="url(#fill-expense)" activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }} />
+        <Area
+          type="monotone"
+          dataKey="income"
+          name="Income"
+          stroke={INCOME}
+          strokeWidth={2}
+          fill="url(#fill-income)"
+          activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }}
+        />
+        <Area
+          type="monotone"
+          dataKey="expense"
+          name="Expenses"
+          stroke={EXPENSE}
+          strokeWidth={2}
+          fill="url(#fill-expense)"
+          activeDot={{ r: 4, strokeWidth: 2, stroke: 'var(--card)' }}
+        />
       </AreaChart>
     </ResponsiveContainer>
   );
@@ -118,16 +147,41 @@ export function TrendChart({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={trend} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barGap={2} barCategoryGap="24%">
+      <BarChart
+        data={trend}
+        margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+        barGap={2}
+        barCategoryGap="24%"
+      >
         <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-        <XAxis dataKey="month" {...axisProps} tickFormatter={(value: string) => formatMonth(value, 'MMM')} />
-        <YAxis {...axisProps} width={56} tickFormatter={(value: number) => compactMoney(value, currency)} />
+        <XAxis
+          dataKey="month"
+          {...axisProps}
+          tickFormatter={(value: string) => formatMonth(value, 'MMM')}
+        />
+        <YAxis
+          {...axisProps}
+          width={56}
+          tickFormatter={(value: number) => compactMoney(value, currency)}
+        />
         <Tooltip
           cursor={{ fill: 'var(--muted)', opacity: 0.5 }}
-          content={(props) => <ChartTooltip {...props} currency={currency} formatLabel={(label) => formatMonth(label)} />}
+          content={(props) => (
+            <ChartTooltip
+              {...props}
+              currency={currency}
+              formatLabel={(label) => formatMonth(label)}
+            />
+          )}
         />
         <Bar dataKey="income" name="Income" fill={INCOME} radius={[4, 4, 0, 0]} maxBarSize={22} />
-        <Bar dataKey="expense" name="Expenses" fill={EXPENSE} radius={[4, 4, 0, 0]} maxBarSize={22} />
+        <Bar
+          dataKey="expense"
+          name="Expenses"
+          fill={EXPENSE}
+          radius={[4, 4, 0, 0]}
+          maxBarSize={22}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -152,7 +206,12 @@ export function CategoryBreakdown({
   const rows = [
     ...top.map((row) => {
       const category = categories.get(row.categoryId);
-      return { id: row.categoryId, name: category?.name ?? 'Unknown', color: category?.color ?? '#64748b', total: row.total };
+      return {
+        id: row.categoryId,
+        name: category?.name ?? 'Unknown',
+        color: category?.color ?? '#64748b',
+        total: row.total,
+      };
     }),
     ...(rest > 0 ? [{ id: 'rest', name: 'Everything else', color: '#94a3b8', total: rest }] : []),
   ];
@@ -184,7 +243,8 @@ export function CategoryBreakdown({
                   <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-lg">
                     <div className="font-medium">{payload[0].name}</div>
                     <div className="tabular text-muted-foreground">
-                      {formatMoney(Number(payload[0].value), currency)} · {formatPercent(Number(payload[0].value) / sum)}
+                      {formatMoney(Number(payload[0].value), currency)} ·{' '}
+                      {formatPercent(Number(payload[0].value) / sum)}
                     </div>
                   </div>
                 ) : null
@@ -205,7 +265,9 @@ export function CategoryBreakdown({
             <span className="size-2.5 shrink-0 rounded-sm" style={{ background: row.color }} />
             <span className="flex-1 truncate">{row.name}</span>
             <span className="text-muted-foreground tabular">{formatPercent(row.total / sum)}</span>
-            <span className="w-24 text-right font-medium tabular">{compactMoney(row.total, currency)}</span>
+            <span className="w-24 text-right font-medium tabular">
+              {compactMoney(row.total, currency)}
+            </span>
           </li>
         ))}
       </ul>

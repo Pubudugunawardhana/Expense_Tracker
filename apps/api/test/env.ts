@@ -14,7 +14,21 @@ delete process.env.GOOGLE_CLIENT_ID;
 vi.stubGlobal(
   'fetch',
   vi.fn(async () =>
-    Response.json({ result: 'success', rates: { USD: 1, LKR: 300, EUR: 0.9, GBP: 0.8, INR: 84, AUD: 1.5, CAD: 1.4, AED: 3.67, JPY: 150, SGD: 1.3 } }),
+    Response.json({
+      result: 'success',
+      rates: {
+        USD: 1,
+        LKR: 300,
+        EUR: 0.9,
+        GBP: 0.8,
+        INR: 84,
+        AUD: 1.5,
+        CAD: 1.4,
+        AED: 3.67,
+        JPY: 150,
+        SGD: 1.3,
+      },
+    }),
   ),
 );
 

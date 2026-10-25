@@ -13,13 +13,18 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const form = useForm<LoginInput>({ resolver: zodResolver(loginSchema), defaultValues: { email: '', password: '' } });
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
   const { errors, isSubmitting } = form.formState;
 
   const onSubmit = form.handleSubmit(async (input) => {
     try {
       await login(input);
-      navigate((location.state as { from?: string } | null)?.from ?? '/dashboard', { replace: true });
+      navigate((location.state as { from?: string } | null)?.from ?? '/dashboard', {
+        replace: true,
+      });
     } catch (error) {
       form.setError('root', { message: (error as Error).message });
     }
@@ -41,13 +46,22 @@ export function LoginPage() {
       <SocialAuth />
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <Field label="Email" htmlFor="email" error={errors.email?.message}>
-          <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...form.register('email')} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            {...form.register('email')}
+          />
         </Field>
         <Field
           label={
             <span className="flex w-full items-center justify-between">
               Password
-              <Link to="/forgot-password" className="text-xs font-normal text-primary hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-xs font-normal text-primary hover:underline"
+              >
                 Forgot password?
               </Link>
             </span>
@@ -55,10 +69,17 @@ export function LoginPage() {
           htmlFor="password"
           error={errors.password?.message}
         >
-          <PasswordInput id="password" autoComplete="current-password" {...form.register('password')} />
+          <PasswordInput
+            id="password"
+            autoComplete="current-password"
+            {...form.register('password')}
+          />
         </Field>
         {errors.root && (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          <p
+            className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            role="alert"
+          >
             {errors.root.message}
           </p>
         )}

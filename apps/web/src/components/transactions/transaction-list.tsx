@@ -27,9 +27,13 @@ export function TransactionRow({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 truncate font-medium">
           {tx.title}
-          {tx.recurringId && <Repeat className="size-3 shrink-0 text-muted-foreground" aria-label="Recurring" />}
+          {tx.recurringId && (
+            <Repeat className="size-3 shrink-0 text-muted-foreground" aria-label="Recurring" />
+          )}
         </div>
-        <div className="truncate text-xs text-muted-foreground">{category?.name ?? 'Uncategorised'}</div>
+        <div className="truncate text-xs text-muted-foreground">
+          {category?.name ?? 'Uncategorised'}
+        </div>
       </div>
       <div className="text-right">
         <div className={cn('font-semibold tabular', income ? 'text-income' : 'text-foreground')}>
@@ -37,7 +41,9 @@ export function TransactionRow({
           {formatMoney(tx.amount, tx.currency)}
         </div>
         {tx.currency !== baseCurrency && (
-          <div className="text-xs text-muted-foreground tabular">≈ {formatMoney(tx.baseAmount, baseCurrency)}</div>
+          <div className="text-xs text-muted-foreground tabular">
+            ≈ {formatMoney(tx.baseAmount, baseCurrency)}
+          </div>
         )}
       </div>
     </button>
@@ -60,7 +66,10 @@ export function GroupedTransactionList({
   return (
     <div className="space-y-4">
       {[...groups.entries()].map(([date, items]) => {
-        const net = items.reduce((sum, tx) => sum + (tx.type === 'income' ? tx.baseAmount : -tx.baseAmount), 0);
+        const net = items.reduce(
+          (sum, tx) => sum + (tx.type === 'income' ? tx.baseAmount : -tx.baseAmount),
+          0,
+        );
         return (
           <section key={date}>
             <div className="flex items-center justify-between px-2 pb-1 text-xs font-medium text-muted-foreground">
@@ -69,7 +78,12 @@ export function GroupedTransactionList({
             </div>
             <div className="space-y-0.5">
               {items.map((tx) => (
-                <TransactionRow key={tx.id} tx={tx} category={categories.get(tx.categoryId)} baseCurrency={baseCurrency} />
+                <TransactionRow
+                  key={tx.id}
+                  tx={tx}
+                  category={categories.get(tx.categoryId)}
+                  baseCurrency={baseCurrency}
+                />
               ))}
             </div>
           </section>

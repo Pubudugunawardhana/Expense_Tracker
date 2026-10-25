@@ -31,7 +31,8 @@ export function RequireAuth() {
   const status = useSessionBootstrap();
   const location = useLocation();
   if (status === 'loading') return <SplashScreen />;
-  if (status === 'anonymous') return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (status === 'anonymous')
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   return <Outlet />;
 }
 

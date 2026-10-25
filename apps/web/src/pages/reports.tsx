@@ -4,9 +4,23 @@ import { toast } from 'sonner';
 import { CategoryBreakdown, SeriesLegend, TrendChart } from '@/components/charts';
 import { EmptyState, PageHeader } from '@/components/common';
 import { Button } from '@/components/ui/button';
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useCategoryMap, useSummary, useTransactions } from '@/hooks/api';
 import { api, downloadFile } from '@/lib/api';
 import { useAuthStore } from '@/lib/auth-store';
@@ -34,7 +48,9 @@ export function ReportsPage() {
     if (!summary || !user) return;
     setExporting(true);
     try {
-      const { items } = await api<Paginated<Transaction>>(`/transactions?month=${month}&limit=1000&sort=date`);
+      const { items } = await api<Paginated<Transaction>>(
+        `/transactions?month=${month}&limit=1000&sort=date`,
+      );
       await downloadMonthReport({ summary, transactions: items, categories, userName: user.name });
     } catch (error) {
       toast.error((error as Error).message);
@@ -50,7 +66,15 @@ export function ReportsPage() {
         description={`Trends and statements for ${formatMonth(month)}`}
         actions={
           <>
-            <Button variant="outline" onClick={() => downloadFile(`/transactions/export.csv?month=${month}`, `spendly-${month}.csv`).catch((e: Error) => toast.error(e.message))}>
+            <Button
+              variant="outline"
+              onClick={() =>
+                downloadFile(
+                  `/transactions/export.csv?month=${month}`,
+                  `spendly-${month}.csv`,
+                ).catch((e: Error) => toast.error(e.message))
+              }
+            >
               <FileSpreadsheet /> CSV
             </Button>
             <Button onClick={exportPdf} disabled={exporting || !summary}>
@@ -64,12 +88,19 @@ export function ReportsPage() {
         {[
           { label: '12-month income', value: formatMoney(yearIncome, currency) },
           { label: '12-month expenses', value: formatMoney(yearExpense, currency) },
-          { label: 'Average monthly spend', value: formatMoney(yearExpense / activeMonths, currency) },
+          {
+            label: 'Average monthly spend',
+            value: formatMoney(yearExpense / activeMonths, currency),
+          },
         ].map((item) => (
           <Card key={item.label} className="py-5">
             <CardContent className="px-5">
               <div className="text-sm text-muted-foreground">{item.label}</div>
-              {isLoading ? <Skeleton className="mt-2 h-7 w-32" /> : <div className="mt-1 text-xl font-bold tabular">{item.value}</div>}
+              {isLoading ? (
+                <Skeleton className="mt-2 h-7 w-32" />
+              ) : (
+                <div className="mt-1 text-xl font-bold tabular">{item.value}</div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -84,7 +115,11 @@ export function ReportsPage() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          {isLoading ? <Skeleton className="h-[300px]" /> : <TrendChart trend={trend} currency={currency} height={300} />}
+          {isLoading ? (
+            <Skeleton className="h-[300px]" />
+          ) : (
+            <TrendChart trend={trend} currency={currency} height={300} />
+          )}
         </CardContent>
       </Card>
 
@@ -96,7 +131,12 @@ export function ReportsPage() {
           </CardHeader>
           <CardContent>
             {summary?.byCategory.length ? (
-              <CategoryBreakdown totals={summary.byCategory} categories={categories} currency={currency} limit={7} />
+              <CategoryBreakdown
+                totals={summary.byCategory}
+                categories={categories}
+                currency={currency}
+                limit={7}
+              />
             ) : (
               <EmptyState icon={BarChart3} title="No spending this month" />
             )}
@@ -126,14 +166,18 @@ export function ReportsPage() {
                           <CategoryBadge category={categories.get(tx.categoryId)} size="sm" />
                           <div>
                             <div className="font-medium">{tx.title}</div>
-                            <div className="text-xs text-muted-foreground">{formatDateKey(tx.date)}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {formatDateKey(tx.date)}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right text-muted-foreground tabular">
                         {summary?.expense ? formatPercent(tx.baseAmount / summary.expense) : '—'}
                       </TableCell>
-                      <TableCell className="pr-6 text-right font-semibold tabular">{formatMoney(tx.amount, tx.currency)}</TableCell>
+                      <TableCell className="pr-6 text-right font-semibold tabular">
+                        {formatMoney(tx.amount, tx.currency)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

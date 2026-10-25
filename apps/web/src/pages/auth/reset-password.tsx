@@ -30,7 +30,10 @@ export function ResetPasswordPage() {
     }
     setSubmitting(true);
     try {
-      const { message } = await api<{ message: string }>('/auth/reset-password', { method: 'POST', body: parsed.data });
+      const { message } = await api<{ message: string }>('/auth/reset-password', {
+        method: 'POST',
+        body: parsed.data,
+      });
       toast.success(message);
       navigate('/login', { replace: true });
     } catch (err) {
@@ -54,10 +57,20 @@ export function ResetPasswordPage() {
     <AuthLayout title="Choose a new password" description="Make it at least 8 characters long.">
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <Field label="New password" htmlFor="password">
-          <PasswordInput id="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <PasswordInput
+            id="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </Field>
         <Field label="Confirm password" htmlFor="confirm" error={error ?? undefined}>
-          <PasswordInput id="confirm" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <PasswordInput
+            id="confirm"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
         </Field>
         <Button type="submit" className="w-full" disabled={submitting}>
           {submitting ? 'Saving…' : 'Reset password'}

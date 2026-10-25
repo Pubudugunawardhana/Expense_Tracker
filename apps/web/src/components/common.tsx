@@ -26,7 +26,13 @@ export function PageHeader({
 }
 
 /** Percentage change badge. `goodWhenUp` flips the colours for expenses. */
-export function Delta({ change, goodWhenUp = true }: { change: number | null; goodWhenUp?: boolean }) {
+export function Delta({
+  change,
+  goodWhenUp = true,
+}: {
+  change: number | null;
+  goodWhenUp?: boolean;
+}) {
   if (change === null || !Number.isFinite(change)) {
     return <span className="text-xs text-muted-foreground">No data last month</span>;
   }
@@ -34,7 +40,12 @@ export function Delta({ change, goodWhenUp = true }: { change: number | null; go
   const good = up === goodWhenUp;
   const Icon = up ? ArrowUpRight : ArrowDownRight;
   return (
-    <span className={cn('inline-flex items-center gap-0.5 text-xs font-medium', good ? 'text-income' : 'text-expense')}>
+    <span
+      className={cn(
+        'inline-flex items-center gap-0.5 text-xs font-medium',
+        good ? 'text-income' : 'text-expense',
+      )}
+    >
       <Icon className="size-3.5" />
       {formatPercent(Math.abs(change), 1)}
       <span className="ml-1 font-normal text-muted-foreground">vs last month</span>
@@ -97,7 +108,9 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn('flex flex-col items-center justify-center px-6 py-12 text-center', className)}>
+    <div
+      className={cn('flex flex-col items-center justify-center px-6 py-12 text-center', className)}
+    >
       <div className="relative mb-4">
         <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
         <div className="relative grid size-14 place-items-center rounded-2xl border bg-card text-primary shadow-sm">

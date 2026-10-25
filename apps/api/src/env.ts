@@ -38,7 +38,9 @@ if (!parsed.success) {
 export const env = {
   ...parsed.data,
   isProd: parsed.data.NODE_ENV === 'production',
-  clientOrigins: parsed.data.CLIENT_URL.split(',').map((origin) => origin.trim().replace(/\/$/, '')),
+  clientOrigins: parsed.data.CLIENT_URL.split(',').map((origin) =>
+    origin.trim().replace(/\/$/, ''),
+  ),
 };
 
 export const appUrl = env.clientOrigins[0] ?? 'http://localhost:5173';

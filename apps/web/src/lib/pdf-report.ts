@@ -13,7 +13,10 @@ export async function downloadMonthReport({
   categories: Map<string, Category>;
   userName: string;
 }) {
-  const [{ jsPDF }, { default: autoTable }] = await Promise.all([import('jspdf'), import('jspdf-autotable')]);
+  const [{ jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable'),
+  ]);
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const money = (value: number) => formatMoney(value, summary.currency);
   const violet: [number, number, number] = [124, 58, 237];
@@ -32,12 +35,14 @@ export async function downloadMonthReport({
   autoTable(doc, {
     startY: 115,
     head: [['Income', 'Expenses', 'Net', 'Savings rate']],
-    body: [[
-      money(summary.income),
-      money(summary.expense),
-      money(summary.net),
-      summary.savingsRate === null ? '-' : formatPercent(summary.savingsRate),
-    ]],
+    body: [
+      [
+        money(summary.income),
+        money(summary.expense),
+        money(summary.net),
+        summary.savingsRate === null ? '-' : formatPercent(summary.savingsRate),
+      ],
+    ],
     theme: 'grid',
     headStyles: { fillColor: violet },
     styles: { fontSize: 11, cellPadding: 8 },
@@ -72,7 +77,11 @@ export async function downloadMonthReport({
     didDrawPage: () => {
       doc.setFontSize(9);
       doc.setTextColor(150);
-      doc.text(`Generated ${new Date().toLocaleString()}`, 40, doc.internal.pageSize.getHeight() - 20);
+      doc.text(
+        `Generated ${new Date().toLocaleString()}`,
+        40,
+        doc.internal.pageSize.getHeight() - 20,
+      );
     },
   });
 

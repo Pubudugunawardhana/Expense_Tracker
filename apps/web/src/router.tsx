@@ -8,22 +8,35 @@ export const router = createBrowserRouter([
   {
     errorElement: <RouteError />,
     children: [
-      { path: '/', lazy: () => import('@/pages/landing').then((m) => ({ Component: m.LandingPage })) },
+      {
+        path: '/',
+        lazy: () => import('@/pages/landing').then((m) => ({ Component: m.LandingPage })),
+      },
       {
         element: <RequireGuest />,
         children: [
-          { path: '/login', lazy: () => import('@/pages/auth/login').then((m) => ({ Component: m.LoginPage })) },
+          {
+            path: '/login',
+            lazy: () => import('@/pages/auth/login').then((m) => ({ Component: m.LoginPage })),
+          },
           {
             path: '/register',
-            lazy: () => import('@/pages/auth/register').then((m) => ({ Component: m.RegisterPage })),
+            lazy: () =>
+              import('@/pages/auth/register').then((m) => ({ Component: m.RegisterPage })),
           },
           {
             path: '/forgot-password',
-            lazy: () => import('@/pages/auth/forgot-password').then((m) => ({ Component: m.ForgotPasswordPage })),
+            lazy: () =>
+              import('@/pages/auth/forgot-password').then((m) => ({
+                Component: m.ForgotPasswordPage,
+              })),
           },
           {
             path: '/reset-password',
-            lazy: () => import('@/pages/auth/reset-password').then((m) => ({ Component: m.ResetPasswordPage })),
+            lazy: () =>
+              import('@/pages/auth/reset-password').then((m) => ({
+                Component: m.ResetPasswordPage,
+              })),
           },
         ],
       },
@@ -35,18 +48,27 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: '/dashboard',
-                lazy: () => import('@/pages/dashboard').then((m) => ({ Component: m.DashboardPage })),
+                lazy: () =>
+                  import('@/pages/dashboard').then((m) => ({ Component: m.DashboardPage })),
               },
               {
                 path: '/transactions',
-                lazy: () => import('@/pages/transactions').then((m) => ({ Component: m.TransactionsPage })),
+                lazy: () =>
+                  import('@/pages/transactions').then((m) => ({ Component: m.TransactionsPage })),
               },
-              { path: '/budgets', lazy: () => import('@/pages/budgets').then((m) => ({ Component: m.BudgetsPage })) },
+              {
+                path: '/budgets',
+                lazy: () => import('@/pages/budgets').then((m) => ({ Component: m.BudgetsPage })),
+              },
               {
                 path: '/recurring',
-                lazy: () => import('@/pages/recurring').then((m) => ({ Component: m.RecurringPage })),
+                lazy: () =>
+                  import('@/pages/recurring').then((m) => ({ Component: m.RecurringPage })),
               },
-              { path: '/reports', lazy: () => import('@/pages/reports').then((m) => ({ Component: m.ReportsPage })) },
+              {
+                path: '/reports',
+                lazy: () => import('@/pages/reports').then((m) => ({ Component: m.ReportsPage })),
+              },
               {
                 path: '/settings',
                 lazy: () => import('@/pages/settings').then((m) => ({ Component: m.SettingsPage })),

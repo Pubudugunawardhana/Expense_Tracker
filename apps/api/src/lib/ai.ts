@@ -50,7 +50,10 @@ const insightsSchema = z.object({
 const describeCategories = (categories: Category[]) =>
   categories.map((category) => `- ${category.id}: ${category.name} (${category.type})`).join('\n');
 
-const extractionSystemPrompt = (categories: Category[], baseCurrency: Currency) => `You turn a user's input into one transaction for a personal finance app.
+const extractionSystemPrompt = (
+  categories: Category[],
+  baseCurrency: Currency,
+) => `You turn a user's input into one transaction for a personal finance app.
 Today is ${toDateKey(new Date())}. Resolve relative dates ("yesterday", "last Friday") against today; default to today.
 Default currency is ${baseCurrency} unless the input clearly says otherwise ("$" means USD, "Rs" or "rupees" means ${baseCurrency === 'INR' ? 'INR' : 'LKR'}).
 Treat salary, refunds, payments received and sales as income; everything else is an expense.
@@ -143,7 +146,8 @@ export const generateInsights = async (
   categories: Category[],
   budget: { total: number; categories: Record<string, number> },
 ): Promise<Insight[]> => {
-  const nameOf = (id: string) => categories.find((category) => category.id === id)?.name ?? 'Unknown';
+  const nameOf = (id: string) =>
+    categories.find((category) => category.id === id)?.name ?? 'Unknown';
   // Only aggregates are sent – never raw transaction titles or notes.
   const payload = {
     month: summary.month,

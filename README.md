@@ -23,18 +23,18 @@ Track income and expenses in any currency, scan receipts, set budgets and get in
 
 ## ✨ Features
 
-| | |
-|---|---|
-| 🤖 **AI quick add** | Type *"lunch 1500 yesterday"* — Claude turns it into a categorised transaction. |
-| 📸 **Receipt scanning** | Snap a bill; the merchant, total, date and items are extracted with vision. |
-| 💡 **AI insights** | Monthly coaching notes grounded in your numbers (only aggregates are sent, never raw notes). |
-| 💸 **Income & expenses** | Custom categories with icons and colours, notes, search, filters, bulk delete. |
-| 🌍 **Multi-currency** | LKR, USD, EUR, GBP, INR and more, converted to your base currency with daily rates. |
-| 🎯 **Budgets** | Monthly and per-category limits that carry over, with near-limit and over-budget warnings. |
-| 🔁 **Recurring transactions** | Rent, subscriptions and salary are recorded automatically on schedule. |
-| 📊 **Dashboard & reports** | Cash-flow chart, category breakdown, 12-month trend, PDF statements and CSV export. |
-| 🔐 **Auth** | Email + password, Google sign-in, password reset emails, rotating refresh tokens. |
-| 📱 **PWA** | Installable, works offline with the last synced data, dark mode, ⌘K command palette. |
+|                               |                                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------------- |
+| 🤖 **AI quick add**           | Type _"lunch 1500 yesterday"_ — Claude turns it into a categorised transaction.              |
+| 📸 **Receipt scanning**       | Snap a bill; the merchant, total, date and items are extracted with vision.                  |
+| 💡 **AI insights**            | Monthly coaching notes grounded in your numbers (only aggregates are sent, never raw notes). |
+| 💸 **Income & expenses**      | Custom categories with icons and colours, notes, search, filters, bulk delete.               |
+| 🌍 **Multi-currency**         | LKR, USD, EUR, GBP, INR and more, converted to your base currency with daily rates.          |
+| 🎯 **Budgets**                | Monthly and per-category limits that carry over, with near-limit and over-budget warnings.   |
+| 🔁 **Recurring transactions** | Rent, subscriptions and salary are recorded automatically on schedule.                       |
+| 📊 **Dashboard & reports**    | Cash-flow chart, category breakdown, 12-month trend, PDF statements and CSV export.          |
+| 🔐 **Auth**                   | Email + password, Google sign-in, password reset emails, rotating refresh tokens.            |
+| 📱 **PWA**                    | Installable, works offline with the last synced data, dark mode, ⌘K command palette.         |
 
 ## 🧱 Tech stack
 
@@ -86,27 +86,27 @@ npm run dev                              # web → http://localhost:5173, api �
 
 ### Environment variables (`apps/api/.env`)
 
-| Variable | Required | Description |
-|---|---|---|
-| `MONGODB_URI` | ✅ | MongoDB connection string (`memory` for an in-memory dev database) |
-| `JWT_SECRET` | ✅ | Long random string used to sign access tokens |
-| `CLIENT_URL` | ✅ | Allowed frontend origin(s), comma-separated |
-| `ANTHROPIC_API_KEY` | – | Enables AI quick add, receipt scanning and insights |
-| `RESEND_API_KEY`, `EMAIL_FROM` | – | Sends password reset emails (otherwise the link is logged) |
-| `GOOGLE_CLIENT_ID` | – | Enables "Continue with Google" |
-| `DEMO_ENABLED` | – | Public demo account, reset nightly (default `true`) |
+| Variable                       | Required | Description                                                        |
+| ------------------------------ | -------- | ------------------------------------------------------------------ |
+| `MONGODB_URI`                  | ✅       | MongoDB connection string (`memory` for an in-memory dev database) |
+| `JWT_SECRET`                   | ✅       | Long random string used to sign access tokens                      |
+| `CLIENT_URL`                   | ✅       | Allowed frontend origin(s), comma-separated                        |
+| `ANTHROPIC_API_KEY`            | –        | Enables AI quick add, receipt scanning and insights                |
+| `RESEND_API_KEY`, `EMAIL_FROM` | –        | Sends password reset emails (otherwise the link is logged)         |
+| `GOOGLE_CLIENT_ID`             | –        | Enables "Continue with Google"                                     |
+| `DEMO_ENABLED`                 | –        | Public demo account, reset nightly (default `true`)                |
 
 The frontend only needs `VITE_API_URL` in production (see `apps/web/.env.example`).
 
 ### Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Run API and web app together |
-| `npm test` | Unit + API integration tests |
-| `npm run lint` / `npm run typecheck` | Static checks |
-| `npm run build` | Production builds of both apps |
-| `npm run seed` | Create / reset the demo account |
+| Command                              | What it does                             |
+| ------------------------------------ | ---------------------------------------- |
+| `npm run dev`                        | Run API and web app together             |
+| `npm test`                           | Unit + API integration tests             |
+| `npm run lint` / `npm run typecheck` | Static checks                            |
+| `npm run build`                      | Production builds of both apps           |
+| `npm run seed`                       | Create / reset the demo account          |
 | `npm run migrate:v1 -w @spendly/api` | Migrate data from the original v1 schema |
 
 ## ☁️ Deployment
@@ -114,7 +114,7 @@ The frontend only needs `VITE_API_URL` in production (see `apps/web/.env.example
 1. **API → Render:** create a Blueprint from this repo (`render.yaml`), then set `MONGODB_URI`, `CLIENT_URL` (your Vercel URL) and any optional keys.
 2. **Web → Vercel:** import the repo with **Root Directory** `apps/web` and set `VITE_API_URL` to the Render URL.
 3. In MongoDB Atlas, allow connections from Render (Network Access).
-4. In Google Cloud, add your Vercel URL to the OAuth client's *Authorised JavaScript origins*.
+4. In Google Cloud, add your Vercel URL to the OAuth client's _Authorised JavaScript origins_.
 
 ## 🗺️ Roadmap
 

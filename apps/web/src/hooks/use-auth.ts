@@ -18,7 +18,8 @@ export function useAuth() {
   );
 
   const login = useCallback(
-    async (input: LoginInput) => start(await api<AuthResponse>('/auth/login', { method: 'POST', body: input })),
+    async (input: LoginInput) =>
+      start(await api<AuthResponse>('/auth/login', { method: 'POST', body: input })),
     [start],
   );
 

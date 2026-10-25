@@ -87,7 +87,16 @@ transactionsRouter.get('/export.csv', async (req, res) => {
   ]);
   const nameById = new Map(categories.map((category) => [category.id as string, category.name]));
 
-  const header = ['Date', 'Type', 'Title', 'Category', 'Amount', 'Currency', `Amount (${baseCurrency})`, 'Note'];
+  const header = [
+    'Date',
+    'Type',
+    'Title',
+    'Category',
+    'Amount',
+    'Currency',
+    `Amount (${baseCurrency})`,
+    'Note',
+  ];
   const rows = items.map((tx) =>
     [
       tx.date,
@@ -104,7 +113,10 @@ transactionsRouter.get('/export.csv', async (req, res) => {
   );
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="spendly-${query.month ?? 'transactions'}.csv"`);
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="spendly-${query.month ?? 'transactions'}.csv"`,
+  );
   // A UTF-8 byte-order mark makes Excel open the file with the right encoding.
   res.send(`${String.fromCharCode(0xfeff)}${[header.join(','), ...rows].join('\r\n')}`);
 });
@@ -129,7 +141,8 @@ transactionsRouter.put('/:id', async (req, res) => {
 
   const amountChanged = tx.amount !== input.amount || tx.currency !== input.currency;
   tx.set(input);
-  if (amountChanged) tx.baseAmount = await convert(input.amount, input.currency, await getBaseCurrency(req.userId));
+  if (amountChanged)
+    tx.baseAmount = await convert(input.amount, input.currency, await getBaseCurrency(req.userId));
   await tx.save();
   res.json(toTransactionDto(tx));
 });

@@ -39,7 +39,10 @@ export const createApp = () => {
   }
 
   app.get('/', (_req, res) => {
-    res.json({ name: 'Spendly API', docs: 'https://github.com/Pubudugunawardhana/Expense_Tracker' });
+    res.json({
+      name: 'Spendly API',
+      docs: 'https://github.com/Pubudugunawardhana/Expense_Tracker',
+    });
   });
 
   app.get('/api/health', (_req, res) => {

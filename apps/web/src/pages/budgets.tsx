@@ -37,7 +37,9 @@ export function BudgetsPage() {
     if (!budget) return;
     setDraft({
       total: budget.total ? String(budget.total) : '',
-      categories: Object.fromEntries(Object.entries(budget.categories).map(([id, amount]) => [id, String(amount)])),
+      categories: Object.fromEntries(
+        Object.entries(budget.categories).map(([id, amount]) => [id, String(amount)]),
+      ),
     });
   }, [budget]);
 
@@ -56,13 +58,16 @@ export function BudgetsPage() {
   const dirty =
     budget !== undefined &&
     (parsed.total !== budget.total ||
-      JSON.stringify(Object.entries(parsed.categories).sort()) !== JSON.stringify(Object.entries(budget.categories).sort()));
+      JSON.stringify(Object.entries(parsed.categories).sort()) !==
+        JSON.stringify(Object.entries(budget.categories).sort()));
 
   const spentBy = new Map(summary?.byCategory.map((row) => [row.categoryId, row.total]));
   const allocated = Object.values(parsed.categories).reduce((sum, amount) => sum + amount, 0);
   const overall = getBudgetProgress(summary?.expense ?? 0, parsed.total);
   const overCount = expenseCategories.filter(
-    (category) => getBudgetProgress(spentBy.get(category.id) ?? 0, parsed.categories[category.id] ?? 0).status === 'over',
+    (category) =>
+      getBudgetProgress(spentBy.get(category.id) ?? 0, parsed.categories[category.id] ?? 0)
+        .status === 'over',
   ).length;
 
   const onSave = () =>
@@ -84,39 +89,76 @@ export function BudgetsPage() {
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Monthly budget" icon={Target} tone="primary" value={formatMoney(parsed.total, currency)} loading={isLoading}
-          footer={<BudgetStatusLabel status={overall.status} />} />
-        <StatCard label="Allocated to categories" icon={Wallet} value={formatMoney(allocated, currency)} loading={isLoading}
+        <StatCard
+          label="Monthly budget"
+          icon={Target}
+          tone="primary"
+          value={formatMoney(parsed.total, currency)}
+          loading={isLoading}
+          footer={<BudgetStatusLabel status={overall.status} />}
+        />
+        <StatCard
+          label="Allocated to categories"
+          icon={Wallet}
+          value={formatMoney(allocated, currency)}
+          loading={isLoading}
           footer={
             parsed.total > 0 && allocated > parsed.total ? (
               <span className="text-xs text-warning">More than your monthly budget</span>
             ) : (
-              <span className="text-xs text-muted-foreground">{formatMoney(Math.max(parsed.total - allocated, 0), currency)} unallocated</span>
+              <span className="text-xs text-muted-foreground">
+                {formatMoney(Math.max(parsed.total - allocated, 0), currency)} unallocated
+              </span>
             )
           }
         />
-        <StatCard label="Categories over budget" icon={AlertTriangle} tone={overCount ? 'expense' : 'default'} value={overCount} loading={isLoading}
-          footer={<span className="text-xs text-muted-foreground">of {expenseCategories.length} categories</span>} />
+        <StatCard
+          label="Categories over budget"
+          icon={AlertTriangle}
+          tone={overCount ? 'expense' : 'default'}
+          value={overCount}
+          loading={isLoading}
+          footer={
+            <span className="text-xs text-muted-foreground">
+              of {expenseCategories.length} categories
+            </span>
+          }
+        />
       </div>
 
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Overall limit</CardTitle>
-          <CardDescription>The most you want to spend this month across all categories.</CardDescription>
+          <CardDescription>
+            The most you want to spend this month across all categories.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex max-w-sm items-center gap-2">
             <span className="text-sm font-medium text-muted-foreground">{currency}</span>
-            <Input type="number" inputMode="decimal" min="0" placeholder="0" value={draft.total}
-              onChange={(event) => setDraft((current) => ({ ...current, total: event.target.value }))}
-              className="text-lg font-semibold tabular" aria-label="Monthly budget" />
+            <Input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              placeholder="0"
+              value={draft.total}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, total: event.target.value }))
+              }
+              className="text-lg font-semibold tabular"
+              aria-label="Monthly budget"
+            />
           </div>
           {parsed.total > 0 && (
             <div className="space-y-2">
               <BudgetBar progress={overall} className="h-3" />
               <div className="flex justify-between text-sm text-muted-foreground tabular">
                 <span>{formatMoney(overall.spent, currency)} spent</span>
-                <span>{overall.remaining >= 0 ? `${formatMoney(overall.remaining, currency)} left` : `${formatMoney(-overall.remaining, currency)} over`}</span>
+                <span>
+                  {overall.remaining >= 0
+                    ? `${formatMoney(overall.remaining, currency)} left`
+                    : `${formatMoney(-overall.remaining, currency)} over`}
+                </span>
               </div>
             </div>
           )}
@@ -126,9 +168,14 @@ export function BudgetsPage() {
       <h3 className="mb-3 font-semibold">By category</h3>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {isLoading
-          ? Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className="h-40 rounded-xl" />)
+          ? Array.from({ length: 6 }, (_, index) => (
+              <Skeleton key={index} className="h-40 rounded-xl" />
+            ))
           : expenseCategories.map((category) => {
-              const progress = getBudgetProgress(spentBy.get(category.id) ?? 0, parsed.categories[category.id] ?? 0);
+              const progress = getBudgetProgress(
+                spentBy.get(category.id) ?? 0,
+                parsed.categories[category.id] ?? 0,
+              );
               return (
                 <Card key={category.id} className="gap-4 py-5">
                   <CardContent className="space-y-4 px-5">
@@ -138,12 +185,24 @@ export function BudgetsPage() {
                         <div className="truncate font-medium">{category.name}</div>
                         <BudgetStatusLabel status={progress.status} />
                       </div>
-                      <Input type="number" inputMode="decimal" min="0" placeholder="No limit"
+                      <Input
+                        type="number"
+                        inputMode="decimal"
+                        min="0"
+                        placeholder="No limit"
                         value={draft.categories[category.id] ?? ''}
                         onChange={(event) =>
-                          setDraft((current) => ({ ...current, categories: { ...current.categories, [category.id]: event.target.value } }))
+                          setDraft((current) => ({
+                            ...current,
+                            categories: {
+                              ...current.categories,
+                              [category.id]: event.target.value,
+                            },
+                          }))
                         }
-                        className="w-28 text-right tabular" aria-label={`${category.name} budget`} />
+                        className="w-28 text-right tabular"
+                        aria-label={`${category.name} budget`}
+                      />
                     </div>
                     <BudgetBar progress={progress} />
                     <div className="flex justify-between text-xs text-muted-foreground tabular">

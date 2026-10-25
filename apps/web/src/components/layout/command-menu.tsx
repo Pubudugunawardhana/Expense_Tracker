@@ -27,7 +27,10 @@ export function CommandMenu() {
   const { theme, setTheme } = usePrefs();
   const categories = useCategoryMap();
   const { data: config } = useServerConfig();
-  const { data: results } = useTransactions({ search: debounced, limit: 6 }, { enabled: open && Boolean(debounced) });
+  const { data: results } = useTransactions(
+    { search: debounced, limit: 6 },
+    { enabled: open && Boolean(debounced) },
+  );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -47,15 +50,28 @@ export function CommandMenu() {
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} title="Command menu" description="Search transactions or jump to a page">
-      <CommandInput placeholder="Search transactions, pages, actions…" value={search} onValueChange={setSearch} />
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      title="Command menu"
+      description="Search transactions or jump to a page"
+    >
+      <CommandInput
+        placeholder="Search transactions, pages, actions…"
+        value={search}
+        onValueChange={setSearch}
+      />
       <CommandList>
         <CommandEmpty>No results.</CommandEmpty>
         {debounced && results && results.items.length > 0 && (
           <CommandGroup heading="Transactions" forceMount>
             {results.items.map((tx) => (
               // The server already matched these, so include the query in the value to keep cmdk from hiding them.
-              <CommandItem key={tx.id} value={`tx-${tx.id} ${debounced}`} onSelect={() => run(() => openEdit(tx))}>
+              <CommandItem
+                key={tx.id}
+                value={`tx-${tx.id} ${debounced}`}
+                onSelect={() => run(() => openEdit(tx))}
+              >
                 <CategoryBadge category={categories.get(tx.categoryId)} size="sm" />
                 <div className="min-w-0 flex-1">
                   <div className="truncate">{tx.title}</div>

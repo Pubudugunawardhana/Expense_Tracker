@@ -57,7 +57,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id: string) => {
-          if (/node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/.test(id)) return 'react';
+          if (/node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/.test(id))
+            return 'react';
           if (/node_modules[\\/](recharts|d3-|victory-vendor)/.test(id)) return 'charts';
           return undefined;
         },

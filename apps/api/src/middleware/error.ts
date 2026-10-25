@@ -7,7 +7,9 @@ import { AppError } from '../lib/errors';
 import { logger } from '../lib/logger';
 
 export const notFoundHandler: RequestHandler = (req, res) => {
-  res.status(404).json({ message: `Route ${req.method} ${req.path} not found.` } satisfies ApiErrorBody);
+  res
+    .status(404)
+    .json({ message: `Route ${req.method} ${req.path} not found.` } satisfies ApiErrorBody);
 };
 
 export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
@@ -41,5 +43,7 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   }
 
   logger.error({ err: error }, 'Unhandled error');
-  res.status(500).json({ message: 'Something went wrong. Please try again.' } satisfies ApiErrorBody);
+  res
+    .status(500)
+    .json({ message: 'Something went wrong. Please try again.' } satisfies ApiErrorBody);
 };

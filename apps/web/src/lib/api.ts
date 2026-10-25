@@ -15,11 +15,16 @@ export class ApiError extends Error {
 
 const toApiError = async (response: Response) => {
   const body = (await response.json().catch(() => null)) as ApiErrorBody | null;
-  return new ApiError(response.status, body?.message ?? `Request failed (${response.status})`, body?.issues);
+  return new ApiError(
+    response.status,
+    body?.message ?? `Request failed (${response.status})`,
+    body?.issues,
+  );
 };
 
 /** Endpoints whose 401 means "wrong credentials", not "access token expired". */
-const PUBLIC_AUTH_PATHS = /^\/auth\/(login|register|google|demo|refresh|logout|forgot-password|reset-password)/;
+const PUBLIC_AUTH_PATHS =
+  /^\/auth\/(login|register|google|demo|refresh|logout|forgot-password|reset-password)/;
 
 let refreshing: Promise<AuthResponse | null> | null = null;
 
@@ -59,7 +64,11 @@ async function send(path: string, options: RequestOptions, token: string | null)
       ...(options.body && !isForm ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: options.body ? (isForm ? (options.body as FormData) : JSON.stringify(options.body)) : undefined,
+    body: options.body
+      ? isForm
+        ? (options.body as FormData)
+        : JSON.stringify(options.body)
+      : undefined,
   });
 }
 

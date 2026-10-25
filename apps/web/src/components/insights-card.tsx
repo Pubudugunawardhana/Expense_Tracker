@@ -1,7 +1,14 @@
 import { AlertTriangle, Info, RefreshCw, Sparkles, ThumbsUp } from 'lucide-react';
 import type { InsightTone } from '@spendly/shared';
 import { Button } from '@/components/ui/button';
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useInsights, useRefreshInsights, useServerConfig } from '@/hooks/api';
 import { formatAgo } from '@/lib/format';
@@ -29,7 +36,9 @@ export function InsightsCard({ month, hasData }: { month: string; hasData: boole
           <Sparkles className="size-4 text-primary" /> AI insights
         </CardTitle>
         <CardDescription>
-          {data?.generatedAt ? `Updated ${formatAgo(data.generatedAt)}` : 'Personal tips based on this month'}
+          {data?.generatedAt
+            ? `Updated ${formatAgo(data.generatedAt)}`
+            : 'Personal tips based on this month'}
         </CardDescription>
         {hasData && (
           <CardAction>
@@ -46,7 +55,11 @@ export function InsightsCard({ month, hasData }: { month: string; hasData: boole
         )}
       </CardHeader>
       <CardContent className="space-y-3">
-        {!hasData && <p className="text-sm text-muted-foreground">Add a few transactions to get personalised insights.</p>}
+        {!hasData && (
+          <p className="text-sm text-muted-foreground">
+            Add a few transactions to get personalised insights.
+          </p>
+        )}
         {(isLoading || refresh.isPending) &&
           Array.from({ length: 3 }, (_, index) => (
             <div key={index} className="flex gap-3">
@@ -57,14 +70,21 @@ export function InsightsCard({ month, hasData }: { month: string; hasData: boole
               </div>
             </div>
           ))}
-        {error && !refresh.isPending && <p className="text-sm text-muted-foreground">{error.message}</p>}
+        {error && !refresh.isPending && (
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        )}
         {!isLoading &&
           !refresh.isPending &&
           data?.insights.map((insight) => {
             const tone = TONES[insight.tone];
             return (
               <div key={insight.title} className="flex gap-3">
-                <span className={cn('grid size-8 shrink-0 place-items-center rounded-lg', tone.className)}>
+                <span
+                  className={cn(
+                    'grid size-8 shrink-0 place-items-center rounded-lg',
+                    tone.className,
+                  )}
+                >
                   <tone.icon className="size-4" />
                 </span>
                 <div>

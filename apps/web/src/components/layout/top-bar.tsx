@@ -1,4 +1,13 @@
-import { ChevronLeft, ChevronRight, LogOut, Monitor, Moon, Search, Settings, Sun } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  Monitor,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+} from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { shiftMonth, toMonthKey } from '@spendly/shared';
 import { Logo } from '@/components/brand/logo';
@@ -28,7 +37,13 @@ export function MonthPicker() {
   const current = toMonthKey(new Date());
   return (
     <div className="flex items-center rounded-lg border bg-card">
-      <Button variant="ghost" size="icon" className="size-8" onClick={() => setMonth(shiftMonth(month, -1))} aria-label="Previous month">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-8"
+        onClick={() => setMonth(shiftMonth(month, -1))}
+        aria-label="Previous month"
+      >
         <ChevronLeft />
       </Button>
       <button
@@ -68,10 +83,16 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button type="button" className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Account menu">
+        <button
+          type="button"
+          className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="Account menu"
+        >
           <Avatar className="size-9">
             {user?.avatar && <AvatarImage src={user.avatar} alt="" referrerPolicy="no-referrer" />}
-            <AvatarFallback className="bg-primary/15 text-xs font-semibold text-primary">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary/15 text-xs font-semibold text-primary">
+              {initials}
+            </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
@@ -114,7 +135,8 @@ export function UserMenu() {
 export function TopBar() {
   const { pathname } = useLocation();
   const setCommandOpen = useCommandMenu((state) => state.setOpen);
-  const title = [...NAV_ITEMS, ...SECONDARY_NAV].find((item) => pathname.startsWith(item.to))?.label ?? '';
+  const title =
+    [...NAV_ITEMS, ...SECONDARY_NAV].find((item) => pathname.startsWith(item.to))?.label ?? '';
   const showMonth = MONTH_PAGES.some((page) => pathname.startsWith(page));
 
   return (
@@ -132,7 +154,13 @@ export function TopBar() {
           Search or jump to…
           <kbd className="ml-auto rounded border bg-muted px-1.5 font-mono text-[10px]">⌘K</kbd>
         </Button>
-        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setCommandOpen(true)} aria-label="Search">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={() => setCommandOpen(true)}
+          aria-label="Search"
+        >
           <Search />
         </Button>
         <UserMenu />

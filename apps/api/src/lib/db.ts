@@ -10,7 +10,8 @@ export const connectMongo = async (uri: string) => {
   try {
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 15_000 });
   } catch (error) {
-    const srvLookupFailed = error instanceof Error && /querySrv|ENOTFOUND|ECONNREFUSED/.test(error.message);
+    const srvLookupFailed =
+      error instanceof Error && /querySrv|ENOTFOUND|ECONNREFUSED/.test(error.message);
     if (!uri.startsWith('mongodb+srv://') || !srvLookupFailed) throw error;
     logger.warn('SRV lookup failed with the system DNS – retrying with public DNS servers');
     dns.setServers(['1.1.1.1', '8.8.8.8']);

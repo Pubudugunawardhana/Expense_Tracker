@@ -59,7 +59,13 @@ export function AiAssist({ onResult }: { onResult: (draft: ParsedTransaction) =>
           aria-label="Describe a transaction"
           className="bg-background"
         />
-        <Button type="button" size="icon" onClick={submit} disabled={busy || text.trim().length < 2} aria-label="Fill with AI">
+        <Button
+          type="button"
+          size="icon"
+          onClick={submit}
+          disabled={busy || text.trim().length < 2}
+          aria-label="Fill with AI"
+        >
           {parse.isPending ? <Loader2 className="animate-spin" /> : <Sparkles />}
         </Button>
         <Button

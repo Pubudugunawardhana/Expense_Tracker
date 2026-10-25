@@ -12,7 +12,10 @@ import { PasswordInput } from './password-input';
 export function RegisterPage() {
   const { register: signUp } = useAuth();
   const navigate = useNavigate();
-  const form = useForm<RegisterInput>({ resolver: zodResolver(registerSchema), defaultValues: { name: '', email: '', password: '' } });
+  const form = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: '', email: '', password: '' },
+  });
   const { errors, isSubmitting } = form.formState;
 
   const onSubmit = form.handleSubmit(async (input) => {
@@ -43,13 +46,27 @@ export function RegisterPage() {
           <Input id="name" autoComplete="name" placeholder="Your name" {...form.register('name')} />
         </Field>
         <Field label="Email" htmlFor="email" error={errors.email?.message}>
-          <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" {...form.register('email')} />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            {...form.register('email')}
+          />
         </Field>
-        <Field label="Password" htmlFor="password" error={errors.password?.message} hint="At least 8 characters.">
+        <Field
+          label="Password"
+          htmlFor="password"
+          error={errors.password?.message}
+          hint="At least 8 characters."
+        >
           <PasswordInput id="password" autoComplete="new-password" {...form.register('password')} />
         </Field>
         {errors.root && (
-          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+          <p
+            className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            role="alert"
+          >
             {errors.root.message}
           </p>
         )}

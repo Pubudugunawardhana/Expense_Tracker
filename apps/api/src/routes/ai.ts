@@ -36,7 +36,10 @@ const upload = multer({
 });
 
 const loadContext = async (userId: string) => {
-  const [user, categories] = await Promise.all([User.findById(userId, 'baseCurrency'), listCategories(userId)]);
+  const [user, categories] = await Promise.all([
+    User.findById(userId, 'baseCurrency'),
+    listCategories(userId),
+  ]);
   return {
     baseCurrency: (user?.baseCurrency ?? 'LKR') as Currency,
     categories: categories.map(toCategoryDto),
@@ -49,7 +52,9 @@ const sanitize = async (
   draft: ExtractedTransaction,
   categories: { id: string; type: string }[],
 ): Promise<ParsedTransaction> => {
-  const category = categories.find((item) => item.id === draft.categoryId && item.type === draft.type);
+  const category = categories.find(
+    (item) => item.id === draft.categoryId && item.type === draft.type,
+  );
   const categoryId = category?.id ?? (await getFallbackCategory(userId, draft.type)).id;
   const date = /^\d{4}-\d{2}-\d{2}$/.test(draft.date) ? draft.date : toDateKey(new Date());
 
@@ -78,7 +83,12 @@ aiRouter.post('/receipt', upload.single('receipt'), async (req, res) => {
     throw badRequest('Upload a JPG, PNG, WebP or GIF image.');
   }
   const { baseCurrency, categories } = await loadContext(req.userId);
-  const draft = await parseReceiptImage(file.buffer, file.mimetype as ReceiptMediaType, categories, baseCurrency);
+  const draft = await parseReceiptImage(
+    file.buffer,
+    file.mimetype as ReceiptMediaType,
+    categories,
+    baseCurrency,
+  );
   res.json(await sanitize(req.userId, draft, categories));
 });
 

@@ -57,7 +57,8 @@ const sendSession = async (res: Response, user: UserDoc, status = 200) => {
 
 authRouter.post('/register', authLimiter, async (req, res) => {
   const input = registerSchema.parse(req.body);
-  if (await User.exists({ email: input.email })) throw conflict('That email is already registered.');
+  if (await User.exists({ email: input.email }))
+    throw conflict('That email is already registered.');
 
   const user = await User.create(input);
   await ensureDefaultCategories(user.id);
@@ -83,9 +84,12 @@ authRouter.post('/google', authLimiter, async (req, res) => {
       throw unauthorized('Google sign-in failed. Please try again.');
     });
   const profile = ticket.getPayload();
-  if (!profile?.email || !profile.email_verified) throw unauthorized('Your Google email is not verified.');
+  if (!profile?.email || !profile.email_verified)
+    throw unauthorized('Your Google email is not verified.');
 
-  let user = await User.findOne({ $or: [{ googleId: profile.sub }, { email: profile.email.toLowerCase() }] });
+  let user = await User.findOne({
+    $or: [{ googleId: profile.sub }, { email: profile.email.toLowerCase() }],
+  });
   let created = false;
   if (!user) {
     user = await User.create({

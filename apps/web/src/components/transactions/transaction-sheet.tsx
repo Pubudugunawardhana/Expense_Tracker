@@ -12,7 +12,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -23,7 +29,12 @@ import {
 } from '@/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useCategories, useDeleteTransactions, useSaveTransaction, useServerConfig } from '@/hooks/api';
+import {
+  useCategories,
+  useDeleteTransactions,
+  useSaveTransaction,
+  useServerConfig,
+} from '@/hooks/api';
 import { useAuthStore } from '@/lib/auth-store';
 import { useTransactionSheet } from '@/lib/ui-store';
 import { AiAssist } from './ai-assist';
@@ -82,7 +93,11 @@ export function TransactionSheet() {
       { id: editing?.id, input },
       {
         onSuccess: () => {
-          toast.success(editing ? 'Transaction updated' : `${input.type === 'income' ? 'Income' : 'Expense'} added`);
+          toast.success(
+            editing
+              ? 'Transaction updated'
+              : `${input.type === 'income' ? 'Income' : 'Expense'} added`,
+          );
           close();
         },
         // Keep the form filled in so nothing is lost when saving fails.
@@ -112,7 +127,11 @@ export function TransactionSheet() {
           </SheetDescription>
         </SheetHeader>
 
-        <form id="transaction-form" onSubmit={onSubmit} className="flex-1 space-y-5 overflow-y-auto p-5">
+        <form
+          id="transaction-form"
+          onSubmit={onSubmit}
+          className="flex-1 space-y-5 overflow-y-auto p-5"
+        >
           {!editing && config?.features.ai && (
             <AiAssist onResult={(result) => reset({ ...defaults, ...result })} />
           )}
@@ -121,7 +140,10 @@ export function TransactionSheet() {
             control={control}
             name="type"
             render={({ field }) => (
-              <Tabs value={field.value} onValueChange={(value) => field.onChange(value as TransactionType)}>
+              <Tabs
+                value={field.value}
+                onValueChange={(value) => field.onChange(value as TransactionType)}
+              >
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="expense">Expense</TabsTrigger>
                   <TabsTrigger value="income">Income</TabsTrigger>
@@ -167,7 +189,11 @@ export function TransactionSheet() {
           </div>
 
           <Field label="Title" htmlFor="title" error={formState.errors.title?.message}>
-            <Input id="title" placeholder={type === 'income' ? 'e.g. Salary' : 'e.g. Groceries at Keells'} {...register('title')} />
+            <Input
+              id="title"
+              placeholder={type === 'income' ? 'e.g. Salary' : 'e.g. Groceries at Keells'}
+              {...register('title')}
+            />
           </Field>
 
           <Field label="Category" error={formState.errors.categoryId?.message}>
@@ -175,7 +201,11 @@ export function TransactionSheet() {
               control={control}
               name="categoryId"
               render={({ field }) => (
-                <CategoryPicker categories={typeCategories} value={field.value} onChange={field.onChange} />
+                <CategoryPicker
+                  categories={typeCategories}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               )}
             />
           </Field>
@@ -191,7 +221,13 @@ export function TransactionSheet() {
 
         <SheetFooter className="flex-row border-t p-5">
           {editing && (
-            <Button type="button" variant="ghost" className="text-destructive" onClick={onDelete} disabled={remove.isPending}>
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-destructive"
+              onClick={onDelete}
+              disabled={remove.isPending}
+            >
               Delete
             </Button>
           )}

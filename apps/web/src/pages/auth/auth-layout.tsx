@@ -10,7 +10,17 @@ import { useAuth } from '@/hooks/use-auth';
 import { usePrefs } from '@/lib/prefs-store';
 import { useState } from 'react';
 
-export function AuthLayout({ title, description, children, footer }: { title: string; description: string; children: ReactNode; footer?: ReactNode }) {
+export function AuthLayout({
+  title,
+  description,
+  children,
+  footer,
+}: {
+  title: string;
+  description: string;
+  children: ReactNode;
+  footer?: ReactNode;
+}) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <div className="flex flex-col px-6 py-8 sm:px-12">
@@ -34,10 +44,12 @@ export function AuthLayout({ title, description, children, footer }: { title: st
             <Sparkles className="size-3.5 text-violet-300" /> AI-powered personal finance
           </div>
           <blockquote className="max-w-md text-2xl leading-snug font-semibold">
-            “Type <span className="text-violet-300">lunch 1500 yesterday</span> or snap a receipt — Spendly does the bookkeeping for you.”
+            “Type <span className="text-violet-300">lunch 1500 yesterday</span> or snap a receipt —
+            Spendly does the bookkeeping for you.”
           </blockquote>
           <p className="mt-4 max-w-md text-sm text-white/60">
-            Income, expenses, budgets and recurring bills in any currency, with insights that actually help you save.
+            Income, expenses, budgets and recurring bills in any currency, with insights that
+            actually help you save.
           </p>
         </div>
       </div>
@@ -54,7 +66,9 @@ export function SocialAuth() {
   const theme = usePrefs((state) => state.theme);
   const [demoLoading, setDemoLoading] = useState(false);
   const destination = (location.state as { from?: string } | null)?.from ?? '/dashboard';
-  const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const dark =
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const tryDemo = async () => {
     setDemoLoading(true);

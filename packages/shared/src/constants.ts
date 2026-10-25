@@ -1,7 +1,18 @@
 export const TRANSACTION_TYPES = ['income', 'expense'] as const;
 export type TransactionType = (typeof TRANSACTION_TYPES)[number];
 
-export const CURRENCIES = ['LKR', 'USD', 'EUR', 'GBP', 'INR', 'AUD', 'CAD', 'AED', 'JPY', 'SGD'] as const;
+export const CURRENCIES = [
+  'LKR',
+  'USD',
+  'EUR',
+  'GBP',
+  'INR',
+  'AUD',
+  'CAD',
+  'AED',
+  'JPY',
+  'SGD',
+] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const DEFAULT_CURRENCY: Currency = 'LKR';
 

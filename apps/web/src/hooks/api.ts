@@ -54,7 +54,6 @@ export const useCategories = () =>
     queryKey: keys.categories,
     queryFn: () => api<Category[]>('/categories'),
     staleTime: 5 * 60 * 1000,
-    select: (categories) => categories,
   });
 
 /** Category lookup by id. */
@@ -122,7 +121,9 @@ export const useDeleteTransactions = () => {
     // Optimistically hide deleted rows from every cached list.
     onMutate: async (ids) => {
       await queryClient.cancelQueries({ queryKey: ['transactions'] });
-      const snapshots = queryClient.getQueriesData<Paginated<Transaction>>({ queryKey: ['transactions'] });
+      const snapshots = queryClient.getQueriesData<Paginated<Transaction>>({
+        queryKey: ['transactions'],
+      });
       for (const [key, data] of snapshots) {
         if (!data) continue;
         queryClient.setQueryData<Paginated<Transaction>>(key, {
@@ -158,7 +159,8 @@ export const useBudget = (month: string) =>
 export const useSaveBudget = (month: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: BudgetInput) => api<Budget>(`/budgets/${month}`, { method: 'PUT', body: input }),
+    mutationFn: (input: BudgetInput) =>
+      api<Budget>(`/budgets/${month}`, { method: 'PUT', body: input }),
     onSuccess: (budget) => {
       queryClient.setQueryData(keys.budget(month), budget);
       // Later months may inherit this budget.
@@ -213,7 +215,8 @@ export const useRefreshInsights = (month: string) => {
 
 export const useParseText = () =>
   useMutation({
-    mutationFn: (text: string) => api<ParsedTransaction>('/ai/parse', { method: 'POST', body: { text } }),
+    mutationFn: (text: string) =>
+      api<ParsedTransaction>('/ai/parse', { method: 'POST', body: { text } }),
   });
 
 export const useScanReceipt = () =>
@@ -233,7 +236,8 @@ export const useFeedback = () =>
 export const useSendFeedback = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: FeedbackInput) => api<Feedback>('/feedback', { method: 'POST', body: input }),
+    mutationFn: (input: FeedbackInput) =>
+      api<Feedback>('/feedback', { method: 'POST', body: input }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.feedback }),
   });
 };
@@ -244,7 +248,8 @@ export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   const setUser = useAuthStore((state) => state.setUser);
   return useMutation({
-    mutationFn: (input: UpdateProfileInput) => api<User>('/auth/me', { method: 'PATCH', body: input }),
+    mutationFn: (input: UpdateProfileInput) =>
+      api<User>('/auth/me', { method: 'PATCH', body: input }),
     onSuccess: (user, input) => {
       setUser(user);
       if (input.baseCurrency) void queryClient.invalidateQueries();

@@ -8,7 +8,13 @@ import { GroupedTransactionList } from '@/components/transactions/transaction-li
 import { formatRelativeDay, percentChange } from '@/lib/format';
 import { useTransactionSheet } from '@/lib/ui-store';
 
-const food: Category = { id: 'c1', name: 'Food', type: 'expense', icon: 'utensils', color: '#f97316' };
+const food: Category = {
+  id: 'c1',
+  name: 'Food',
+  type: 'expense',
+  icon: 'utensils',
+  color: '#f97316',
+};
 const tx = (overrides: Partial<Transaction>): Transaction => ({
   id: 't1',
   type: 'expense',
@@ -63,7 +69,14 @@ describe('GroupedTransactionList', () => {
         transactions={[
           tx({}),
           tx({ id: 't2', title: 'Netflix', currency: 'USD', amount: 10, baseAmount: 3000 }),
-          tx({ id: 't3', title: 'Salary', type: 'income', amount: 100000, baseAmount: 100000, date: '2025-02-25' }),
+          tx({
+            id: 't3',
+            title: 'Salary',
+            type: 'income',
+            amount: 100000,
+            baseAmount: 100000,
+            date: '2025-02-25',
+          }),
         ]}
         categories={new Map([[food.id, food]])}
         baseCurrency="LKR"

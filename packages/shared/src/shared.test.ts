@@ -19,7 +19,11 @@ describe('budget status', () => {
   });
 
   it('computes remaining and percent', () => {
-    expect(getBudgetProgress(150, 100)).toMatchObject({ remaining: -50, percent: 150, status: 'over' });
+    expect(getBudgetProgress(150, 100)).toMatchObject({
+      remaining: -50,
+      percent: 150,
+      status: 'over',
+    });
   });
 });
 

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { shiftMonth, toDateKey, toMonthKey, type Paginated, type RecurringRule, type Transaction } from '@spendly/shared';
+import {
+  shiftMonth,
+  toDateKey,
+  toMonthKey,
+  type Paginated,
+  type RecurringRule,
+  type Transaction,
+} from '@spendly/shared';
 import { nextOccurrence } from '../src/services/recurring';
 import { signUp } from './helpers';
 
@@ -12,12 +19,26 @@ describe('budgets', () => {
     expect(empty.body).toEqual({ month, total: 0, categories: {} });
 
     const food = categoryId('Food');
-    await agent.put(`/api/budgets/${month}`).set(auth).send({ total: 100000, categories: { [food]: 30000 } }).expect(200);
+    await agent
+      .put(`/api/budgets/${month}`)
+      .set(auth)
+      .send({ total: 100000, categories: { [food]: 30000 } })
+      .expect(200);
 
-    const next = await agent.get(`/api/budgets/${shiftMonth(month, 1)}`).set(auth).expect(200);
-    expect(next.body).toEqual({ month: shiftMonth(month, 1), total: 100000, categories: { [food]: 30000 } });
+    const next = await agent
+      .get(`/api/budgets/${shiftMonth(month, 1)}`)
+      .set(auth)
+      .expect(200);
+    expect(next.body).toEqual({
+      month: shiftMonth(month, 1),
+      total: 100000,
+      categories: { [food]: 30000 },
+    });
 
-    const previous = await agent.get(`/api/budgets/${shiftMonth(month, -1)}`).set(auth).expect(200);
+    const previous = await agent
+      .get(`/api/budgets/${shiftMonth(month, -1)}`)
+      .set(auth)
+      .expect(200);
     expect(previous.body.total).toBe(0);
   });
 
@@ -44,12 +65,22 @@ describe('recurring rules', () => {
     const response = await agent
       .post('/api/recurring')
       .set(auth)
-      .send({ type: 'expense', title: 'Gym', amount: 500, currency: 'LKR', categoryId: categoryId('Health'), frequency: 'weekly', startDate: toDateKey(start), active: true })
+      .send({
+        type: 'expense',
+        title: 'Gym',
+        amount: 500,
+        currency: 'LKR',
+        categoryId: categoryId('Health'),
+        frequency: 'weekly',
+        startDate: toDateKey(start),
+        active: true,
+      })
       .expect(201);
     const rule = response.body as RecurringRule;
     expect(rule.nextRun > toDateKey(new Date())).toBe(true);
 
-    const list = (await agent.get('/api/transactions?search=Gym').set(auth)).body as Paginated<Transaction>;
+    const list = (await agent.get('/api/transactions?search=Gym').set(auth))
+      .body as Paginated<Transaction>;
     expect(list.total).toBe(3); // 14 days ago, 7 days ago, today
     expect(list.items.every((tx) => tx.recurringId === rule.id)).toBe(true);
   });
@@ -59,7 +90,16 @@ describe('recurring rules', () => {
     await agent
       .post('/api/recurring')
       .set(auth)
-      .send({ type: 'income', title: 'Salary', amount: 1000, currency: 'LKR', categoryId: categoryId('Salary'), frequency: 'monthly', startDate: toDateKey(new Date()), active: false })
+      .send({
+        type: 'income',
+        title: 'Salary',
+        amount: 1000,
+        currency: 'LKR',
+        categoryId: categoryId('Salary'),
+        frequency: 'monthly',
+        startDate: toDateKey(new Date()),
+        active: false,
+      })
       .expect(201);
     expect((await agent.get('/api/transactions').set(auth)).body.total).toBe(0);
   });
@@ -71,11 +111,25 @@ describe('categories', () => {
     await agent
       .post('/api/transactions')
       .set(auth)
-      .send({ type: 'expense', title: 'Shoes', amount: 10, currency: 'LKR', categoryId: categoryId('Shopping'), date: toDateKey(new Date()), note: '' });
-    await agent.delete(`/api/categories/${categoryId('Shopping')}`).set(auth).expect(204);
+      .send({
+        type: 'expense',
+        title: 'Shoes',
+        amount: 10,
+        currency: 'LKR',
+        categoryId: categoryId('Shopping'),
+        date: toDateKey(new Date()),
+        note: '',
+      });
+    await agent
+      .delete(`/api/categories/${categoryId('Shopping')}`)
+      .set(auth)
+      .expect(204);
     const list = (await agent.get('/api/transactions').set(auth)).body as Paginated<Transaction>;
     expect(list.items[0]!.categoryId).toBe(categoryId('Other'));
-    await agent.delete(`/api/categories/${categoryId('Other')}`).set(auth).expect(400);
+    await agent
+      .delete(`/api/categories/${categoryId('Other')}`)
+      .set(auth)
+      .expect(400);
   });
 });
 

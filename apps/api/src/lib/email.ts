@@ -23,7 +23,10 @@ const layout = (heading: string, body: string, cta: { label: string; url: string
 export const sendPasswordResetEmail = async (to: string, name: string, url: string) => {
   if (!resend) {
     // Local development without an email provider: print the link instead.
-    logger.warn({ to, url }, 'RESEND_API_KEY not set – password reset link logged instead of emailed');
+    logger.warn(
+      { to, url },
+      'RESEND_API_KEY not set – password reset link logged instead of emailed',
+    );
     return;
   }
 

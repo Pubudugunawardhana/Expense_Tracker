@@ -45,14 +45,80 @@ const VARIABLE_EXPENSES: Template[] = [
 ];
 
 const FIXED: (Template & { day: number; type: 'income' | 'expense' })[] = [
-  { title: 'Salary – Acme Software', category: 'Salary', min: 285000, max: 285000, perMonth: 1, day: 25, type: 'income' },
-  { title: 'Apartment rent', category: 'Housing', min: 65000, max: 65000, perMonth: 1, day: 1, type: 'expense' },
-  { title: 'CEB electricity bill', category: 'Bills', min: 5200, max: 8900, perMonth: 1, day: 8, type: 'expense' },
-  { title: 'Dialog fibre', category: 'Bills', min: 4990, max: 4990, perMonth: 1, day: 12, type: 'expense' },
-  { title: 'Netflix', category: 'Entertainment', min: 9.99, max: 9.99, perMonth: 1, day: 15, type: 'expense', currency: 'USD' },
-  { title: 'Gym membership', category: 'Health', min: 7500, max: 7500, perMonth: 1, day: 3, type: 'expense' },
-  { title: 'Udemy course', category: 'Education', min: 14.99, max: 14.99, perMonth: 0.5, day: 18, type: 'expense', currency: 'USD' },
-  { title: 'Freelance – logo design', category: 'Freelance', min: 35000, max: 90000, perMonth: 0.7, day: 14, type: 'income' },
+  {
+    title: 'Salary – Acme Software',
+    category: 'Salary',
+    min: 285000,
+    max: 285000,
+    perMonth: 1,
+    day: 25,
+    type: 'income',
+  },
+  {
+    title: 'Apartment rent',
+    category: 'Housing',
+    min: 65000,
+    max: 65000,
+    perMonth: 1,
+    day: 1,
+    type: 'expense',
+  },
+  {
+    title: 'CEB electricity bill',
+    category: 'Bills',
+    min: 5200,
+    max: 8900,
+    perMonth: 1,
+    day: 8,
+    type: 'expense',
+  },
+  {
+    title: 'Dialog fibre',
+    category: 'Bills',
+    min: 4990,
+    max: 4990,
+    perMonth: 1,
+    day: 12,
+    type: 'expense',
+  },
+  {
+    title: 'Netflix',
+    category: 'Entertainment',
+    min: 9.99,
+    max: 9.99,
+    perMonth: 1,
+    day: 15,
+    type: 'expense',
+    currency: 'USD',
+  },
+  {
+    title: 'Gym membership',
+    category: 'Health',
+    min: 7500,
+    max: 7500,
+    perMonth: 1,
+    day: 3,
+    type: 'expense',
+  },
+  {
+    title: 'Udemy course',
+    category: 'Education',
+    min: 14.99,
+    max: 14.99,
+    perMonth: 0.5,
+    day: 18,
+    type: 'expense',
+    currency: 'USD',
+  },
+  {
+    title: 'Freelance – logo design',
+    category: 'Freelance',
+    min: 35000,
+    max: 90000,
+    perMonth: 0.7,
+    day: 14,
+    type: 'income',
+  },
 ];
 
 const round = (value: number, currency: Currency) =>
@@ -128,7 +194,9 @@ export const resetDemoData = async () => {
       await add(template.type, template, dateFor(template.day));
     }
     for (const template of VARIABLE_EXPENSES) {
-      const count = Math.round(template.perMonth * (lastDay / daysInMonth) * (0.7 + random() * 0.6));
+      const count = Math.round(
+        template.perMonth * (lastDay / daysInMonth) * (0.7 + random() * 0.6),
+      );
       for (let i = 0; i < count; i += 1) {
         await add('expense', template, dateFor(1 + Math.floor(random() * lastDay)));
       }

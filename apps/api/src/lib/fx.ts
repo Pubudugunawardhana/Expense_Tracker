@@ -35,7 +35,10 @@ export const getRates = async (): Promise<Record<string, number>> => {
 
   const cached = await FxRate.findOne({ base: 'USD' }).lean();
   if (cached && Date.now() - cached.fetchedAt.getTime() < MAX_AGE_MS) {
-    memo = { rates: Object.fromEntries(Object.entries(cached.rates)), fetchedAt: cached.fetchedAt.getTime() };
+    memo = {
+      rates: Object.fromEntries(Object.entries(cached.rates)),
+      fetchedAt: cached.fetchedAt.getTime(),
+    };
     return memo.rates;
   }
 

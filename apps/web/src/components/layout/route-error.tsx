@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 export function RouteError() {
   const error = useRouteError();
   // A new deploy invalidates old lazy chunks; reloading picks up the new ones.
-  const isChunkError = error instanceof Error && /dynamically imported module|Failed to fetch/i.test(error.message);
+  const isChunkError =
+    error instanceof Error && /dynamically imported module|Failed to fetch/i.test(error.message);
 
   return (
     <div className="grid min-h-dvh place-items-center p-6">

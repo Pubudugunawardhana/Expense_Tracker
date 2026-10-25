@@ -74,7 +74,10 @@ function Sidebar() {
         <Button
           variant="ghost"
           size="sm"
-          className={cn('w-full justify-start text-muted-foreground', collapsed && 'justify-center')}
+          className={cn(
+            'w-full justify-start text-muted-foreground',
+            collapsed && 'justify-center',
+          )}
           onClick={toggleSidebar}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
@@ -112,7 +115,12 @@ function MobileNav() {
     <nav className="fixed inset-x-0 bottom-0 z-40 flex items-center border-t bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-lg lg:hidden">
       {left.map(renderItem)}
       <div className="flex flex-1 justify-center">
-        <Button size="icon" className="-mt-6 size-14 rounded-full shadow-lg shadow-primary/30" onClick={() => openNew()} aria-label="Add transaction">
+        <Button
+          size="icon"
+          className="-mt-6 size-14 rounded-full shadow-lg shadow-primary/30"
+          onClick={() => openNew()}
+          aria-label="Add transaction"
+        >
           <Plus className="size-6" />
         </Button>
       </div>

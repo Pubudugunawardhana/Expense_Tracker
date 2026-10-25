@@ -18,7 +18,11 @@ recurringRouter.post('/', async (req, res) => {
   if (!(await assertCategoryOwned(req.userId, input.categoryId, input.type))) {
     throw badRequest('Pick a valid category for this rule.');
   }
-  const rule = await RecurringRule.create({ ...input, userId: req.userId, nextRun: input.startDate });
+  const rule = await RecurringRule.create({
+    ...input,
+    userId: req.userId,
+    nextRun: input.startDate,
+  });
   // A start date in the past (or today) creates the due transactions straight away.
   await processDueRules(req.userId);
   res.status(201).json(toRecurringDto((await RecurringRule.findById(rule._id))!));

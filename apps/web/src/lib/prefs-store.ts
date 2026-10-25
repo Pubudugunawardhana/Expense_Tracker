@@ -25,7 +25,8 @@ export const usePrefs = create<PrefsState>()(
 
 export const applyTheme = (theme: Theme) => {
   const dark =
-    theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.classList.toggle('dark', dark);
 };
 

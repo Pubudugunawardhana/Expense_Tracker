@@ -12,7 +12,11 @@ const MAX_RUNS_PER_RULE = 120;
  * Next occurrence after `current`. Monthly and yearly rules keep the start date's
  * day of month, clamped to shorter months (Jan 31 → Feb 28 → Mar 31).
  */
-export const nextOccurrence = (current: string, frequency: RecurringFrequency, startDate: string) => {
+export const nextOccurrence = (
+  current: string,
+  frequency: RecurringFrequency,
+  startDate: string,
+) => {
   const date = parseDateKey(current)!;
   const anchorDay = Number(startDate.slice(8, 10));
 
@@ -70,8 +74,13 @@ export const processDueRules = async (userId?: string) => {
   });
   if (rules.length === 0) return 0;
 
-  const owners = await User.find({ _id: { $in: rules.map((rule) => rule.userId) } }, 'baseCurrency');
-  const currencyByUser = new Map(owners.map((owner) => [owner.id as string, owner.baseCurrency as Currency]));
+  const owners = await User.find(
+    { _id: { $in: rules.map((rule) => rule.userId) } },
+    'baseCurrency',
+  );
+  const currencyByUser = new Map(
+    owners.map((owner) => [owner.id as string, owner.baseCurrency as Currency]),
+  );
 
   let created = 0;
   for (const rule of rules) {

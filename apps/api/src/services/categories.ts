@@ -5,9 +5,12 @@ import { Category } from '../models/Category';
 export const ensureDefaultCategories = async (userId: string) => {
   const count = await Category.countDocuments({ userId });
   if (count > 0) return;
-  await Category.insertMany(DEFAULT_CATEGORIES.map((category) => ({ ...category, userId })), {
-    ordered: false,
-  }).catch(() => undefined); // A concurrent request may have seeded them already.
+  await Category.insertMany(
+    DEFAULT_CATEGORIES.map((category) => ({ ...category, userId })),
+    {
+      ordered: false,
+    },
+  ).catch(() => undefined); // A concurrent request may have seeded them already.
 };
 
 export const listCategories = async (userId: string) => {
@@ -24,7 +27,11 @@ export const getFallbackCategory = async (userId: string, type: TransactionType)
   return Category.create({ ...preset, userId });
 };
 
-export const assertCategoryOwned = async (userId: string, categoryId: string, type?: TransactionType) => {
+export const assertCategoryOwned = async (
+  userId: string,
+  categoryId: string,
+  type?: TransactionType,
+) => {
   const category = await Category.findOne({ _id: categoryId, userId });
   if (!category) return null;
   if (type && category.type !== type) return null;
