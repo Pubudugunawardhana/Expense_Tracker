@@ -49,11 +49,13 @@ Track income and expenses in any currency, scan receipts, set budgets and get in
 ```
 spendly/
 ├── apps/
-│   ├── web/          React SPA (Vite) – deployed to Vercel
-│   └── api/          Express REST API – deployed to Render
+│   ├── web/          React SPA (Vite) – static files on Vercel
+│   └── api/          Express REST API – a Vercel serverless function (api/index.js)
 └── packages/
     └── shared/       Zod schemas, types and money/date/budget helpers used by both
 ```
+
+Both apps ship as **one Vercel project on one domain**: `/api/*` is rewritten to the serverless function and everything else is served by the SPA, so there is no CORS setup and the refresh cookie is first-party.
 
 ```mermaid
 flowchart LR
@@ -86,17 +88,16 @@ npm run dev                              # web → http://localhost:5173, api �
 
 ### Environment variables (`apps/api/.env`)
 
-| Variable                       | Required | Description                                                        |
-| ------------------------------ | -------- | ------------------------------------------------------------------ |
-| `MONGODB_URI`                  | ✅       | MongoDB connection string (`memory` for an in-memory dev database) |
-| `JWT_SECRET`                   | ✅       | Long random string used to sign access tokens                      |
-| `CLIENT_URL`                   | ✅       | Allowed frontend origin(s), comma-separated                        |
-| `ANTHROPIC_API_KEY`            | –        | Enables AI quick add, receipt scanning and insights                |
-| `RESEND_API_KEY`, `EMAIL_FROM` | –        | Sends password reset emails (otherwise the link is logged)         |
-| `GOOGLE_CLIENT_ID`             | –        | Enables "Continue with Google"                                     |
-| `DEMO_ENABLED`                 | –        | Public demo account, reset nightly (default `true`)                |
-
-The frontend only needs `VITE_API_URL` in production (see `apps/web/.env.example`).
+| Variable                       | Required | Description                                                         |
+| ------------------------------ | -------- | ------------------------------------------------------------------- |
+| `MONGODB_URI`                  | ✅       | MongoDB connection string (`memory` for an in-memory dev database)  |
+| `JWT_SECRET`                   | ✅       | Long random string used to sign access tokens                       |
+| `CLIENT_URL`                   | –        | Frontend origin(s), comma-separated (defaults to the Vercel domain) |
+| `CRON_SECRET`                  | –        | Protects the daily Vercel Cron job (recurring + demo reset)         |
+| `ANTHROPIC_API_KEY`            | –        | Enables AI quick add, receipt scanning and insights                 |
+| `RESEND_API_KEY`, `EMAIL_FROM` | –        | Sends password reset emails (otherwise the link is logged)          |
+| `GOOGLE_CLIENT_ID`             | –        | Enables "Continue with Google"                                      |
+| `DEMO_ENABLED`                 | –        | Public demo account, reset nightly (default `true`)                 |
 
 ### Scripts
 
@@ -111,10 +112,12 @@ The frontend only needs `VITE_API_URL` in production (see `apps/web/.env.example
 
 ## ☁️ Deployment
 
-1. **API → Render:** create a Blueprint from this repo (`render.yaml`), then set `MONGODB_URI`, `CLIENT_URL` (your Vercel URL) and any optional keys.
-2. **Web → Vercel:** import the repo (leave **Root Directory** as the repo root – `vercel.json` handles the build) and set `VITE_API_URL` to the Render URL.
-3. In MongoDB Atlas, allow connections from Render (Network Access).
-4. In Google Cloud, add your Vercel URL to the OAuth client's _Authorised JavaScript origins_.
+Everything deploys to **Vercel** as a single project (`vercel.json` handles the build, routing and the daily cron job).
+
+1. Import the repo into Vercel and leave **Root Directory** as the repo root.
+2. Add environment variables: `MONGODB_URI`, `JWT_SECRET`, `CRON_SECRET`, plus any optional keys from the table above.
+3. In MongoDB Atlas → **Network Access**, allow `0.0.0.0/0` (Vercel functions don't have fixed IPs).
+4. For Google sign-in, add your Vercel URL to the OAuth client's _Authorised JavaScript origins_.
 
 ## 🗺️ Roadmap
 

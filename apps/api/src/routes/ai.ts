@@ -32,7 +32,8 @@ aiRouter.use(aiLimiter);
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  // Vercel rejects request bodies over 4.5 MB.
+  limits: { fileSize: 4 * 1024 * 1024, files: 1 },
 });
 
 const loadContext = async (userId: string) => {

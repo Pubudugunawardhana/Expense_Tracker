@@ -1,8 +1,6 @@
 import type { ApiErrorBody, AuthResponse } from '@spendly/shared';
 import { useAuthStore } from './auth-store';
 
-const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
-
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -30,7 +28,7 @@ let refreshing: Promise<AuthResponse | null> | null = null;
 
 /** Exchanges the refresh cookie for a new access token. Concurrent callers share one request. */
 export const refreshSession = () => {
-  refreshing ??= fetch(`${API_URL}/api/auth/refresh`, { method: 'POST', credentials: 'include' })
+  refreshing ??= fetch(`/api/auth/refresh`, { method: 'POST', credentials: 'include' })
     .then(async (response) => {
       if (!response.ok) return null;
       const session = (await response.json()) as AuthResponse;
@@ -56,7 +54,7 @@ interface RequestOptions {
 
 async function send(path: string, options: RequestOptions, token: string | null) {
   const isForm = options.body instanceof FormData;
-  return fetch(`${API_URL}/api${path}`, {
+  return fetch(`/api${path}`, {
     method: options.method ?? 'GET',
     credentials: 'include',
     signal: options.signal,

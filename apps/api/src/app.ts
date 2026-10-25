@@ -19,11 +19,13 @@ import { feedbackRouter } from './routes/feedback';
 import { recurringRouter } from './routes/recurring';
 import { statsRouter } from './routes/stats';
 import { transactionsRouter } from './routes/transactions';
+import { resetDemoData } from './services/demo';
+import { processDueRules } from './services/recurring';
 
 export const createApp = () => {
   const app = express();
 
-  app.set('trust proxy', 1); // Render / Vercel sit behind a proxy.
+  app.set('trust proxy', 1); // Vercel sits behind a proxy.
   app.use(helmet());
   app.use(
     cors({
@@ -58,6 +60,17 @@ export const createApp = () => {
       googleClientId: env.GOOGLE_CLIENT_ID ?? null,
       features: { ai: aiEnabled, email: emailEnabled, demo: env.DEMO_ENABLED },
     });
+  });
+
+  /** Daily job, triggered by Vercel Cron (see vercel.json) where timers can't run. */
+  app.get('/api/cron/daily', async (req, res) => {
+    if (!env.CRON_SECRET || req.headers.authorization !== `Bearer ${env.CRON_SECRET}`) {
+      res.status(401).json({ message: 'Unauthorized.' });
+      return;
+    }
+    const created = await processDueRules();
+    if (env.DEMO_ENABLED) await resetDemoData();
+    res.json({ recurringCreated: created, demoReset: env.DEMO_ENABLED });
   });
 
   app.use('/api/auth', authRouter);

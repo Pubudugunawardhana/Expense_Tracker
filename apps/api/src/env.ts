@@ -10,8 +10,19 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
   JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 characters'),
-  /** Comma-separated list of allowed frontend origins. The first one is used in emails. */
-  CLIENT_URL: z.string().default('http://localhost:5173'),
+  /**
+   * Comma-separated list of allowed frontend origins. The first one is used in emails.
+   * On Vercel it defaults to the project's production domain.
+   */
+  CLIENT_URL: z
+    .string()
+    .default(
+      process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : 'http://localhost:5173',
+    ),
+  /** Vercel sends it as a Bearer token when calling the scheduled job. */
+  CRON_SECRET: optional,
   RESEND_API_KEY: optional,
   EMAIL_FROM: z.string().default('Spendly <onboarding@resend.dev>'),
   GOOGLE_CLIENT_ID: optional,

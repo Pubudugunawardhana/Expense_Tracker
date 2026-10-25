@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/scripts/seed.ts', 'src/scripts/migrate-v1.ts'],
+  entry: ['src/index.ts', 'src/vercel.ts', 'src/scripts/seed.ts', 'src/scripts/migrate-v1.ts'],
   format: 'esm',
   target: 'node20',
   platform: 'node',

@@ -20,12 +20,12 @@ export const verifyAccessToken = (token: string) => {
   return payload.sub;
 };
 
-// The web app and API live on different domains in production, so the refresh
-// cookie has to be `SameSite=None; Secure` there.
+// The web app and API share one origin (Vite proxy locally, Vercel in production),
+// so the refresh cookie can be first-party and `SameSite=Lax`.
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   secure: env.isProd,
-  sameSite: env.isProd ? 'none' : 'lax',
+  sameSite: 'lax',
   path: '/api/auth',
 };
 
