@@ -1,13 +1,28 @@
+# Dependencies
 node_modules
+
+# Build output
 dist
+dev-dist
 build
+*.tsbuildinfo
+.vite
+
+# Testing
 coverage
+playwright-report
+test-results
+
+# Environment (secrets)
 .env
 .env.local
 .env.*.local
+
+# IDEs and editors – keep only the shared extension recommendations
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Misc
 *.log
 .DS_Store
-.vite
-playwright-report
-test-results
-*.tsbuildinfo
