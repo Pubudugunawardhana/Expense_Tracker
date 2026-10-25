@@ -112,7 +112,7 @@ The frontend only needs `VITE_API_URL` in production (see `apps/web/.env.example
 ## ☁️ Deployment
 
 1. **API → Render:** create a Blueprint from this repo (`render.yaml`), then set `MONGODB_URI`, `CLIENT_URL` (your Vercel URL) and any optional keys.
-2. **Web → Vercel:** import the repo with **Root Directory** `apps/web` and set `VITE_API_URL` to the Render URL.
+2. **Web → Vercel:** import the repo (leave **Root Directory** as the repo root – `vercel.json` handles the build) and set `VITE_API_URL` to the Render URL.
 3. In MongoDB Atlas, allow connections from Render (Network Access).
 4. In Google Cloud, add your Vercel URL to the OAuth client's _Authorised JavaScript origins_.
 
