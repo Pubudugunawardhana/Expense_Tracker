@@ -217,60 +217,65 @@ export function CategoryBreakdown({
   ];
 
   return (
-    <div className="flex flex-col items-center gap-6 sm:flex-row">
-      <div className="relative size-44 shrink-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={rows}
-              dataKey="total"
-              nameKey="name"
-              innerRadius="68%"
-              outerRadius="100%"
-              paddingAngle={rows.length > 1 ? 2 : 0}
-              cornerRadius={4}
-              stroke="var(--card)"
-              strokeWidth={2}
-              isAnimationActive={false}
-            >
-              {rows.map((row) => (
-                <Cell key={row.id} fill={row.color} />
-              ))}
-            </Pie>
-            <Tooltip
-              content={({ active, payload }) =>
-                active && payload?.[0] ? (
-                  <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-lg">
-                    <div className="font-medium">{payload[0].name}</div>
-                    <div className="tabular text-muted-foreground">
-                      {formatMoney(Number(payload[0].value), currency)} ·{' '}
-                      {formatPercent(Number(payload[0].value) / sum)}
+    // Stack the donut above the list unless the card itself is wide enough (container query).
+    <div className="@container">
+      <div className="flex flex-col items-center gap-6 @md:flex-row">
+        <div className="relative size-44 shrink-0">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={rows}
+                dataKey="total"
+                nameKey="name"
+                innerRadius="68%"
+                outerRadius="100%"
+                paddingAngle={rows.length > 1 ? 2 : 0}
+                cornerRadius={4}
+                stroke="var(--card)"
+                strokeWidth={2}
+                isAnimationActive={false}
+              >
+                {rows.map((row) => (
+                  <Cell key={row.id} fill={row.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) =>
+                  active && payload?.[0] ? (
+                    <div className="rounded-lg border bg-popover px-3 py-2 text-sm shadow-lg">
+                      <div className="font-medium">{payload[0].name}</div>
+                      <div className="tabular text-muted-foreground">
+                        {formatMoney(Number(payload[0].value), currency)} ·{' '}
+                        {formatPercent(Number(payload[0].value) / sum)}
+                      </div>
                     </div>
-                  </div>
-                ) : null
-              }
-            />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
-          <div>
-            <div className="text-xs text-muted-foreground">Spent</div>
-            <div className="text-lg font-bold tabular">{compactMoney(sum, currency)}</div>
+                  ) : null
+                }
+              />
+            </PieChart>
+          </ResponsiveContainer>
+          <div className="pointer-events-none absolute inset-0 grid place-items-center text-center">
+            <div>
+              <div className="text-xs text-muted-foreground">Spent</div>
+              <div className="text-lg font-bold tabular">{compactMoney(sum, currency)}</div>
+            </div>
           </div>
         </div>
+        <ul className="w-full min-w-0 space-y-2.5">
+          {rows.map((row) => (
+            <li key={row.id} className="flex items-center gap-2 text-sm">
+              <span className="size-2.5 shrink-0 rounded-sm" style={{ background: row.color }} />
+              <span className="min-w-0 flex-1 truncate">{row.name}</span>
+              <span className="w-10 shrink-0 text-right text-muted-foreground tabular">
+                {formatPercent(row.total / sum)}
+              </span>
+              <span className="min-w-20 shrink-0 text-right font-medium tabular">
+                {compactMoney(row.total, currency)}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="w-full space-y-2.5">
-        {rows.map((row) => (
-          <li key={row.id} className="flex items-center gap-2 text-sm">
-            <span className="size-2.5 shrink-0 rounded-sm" style={{ background: row.color }} />
-            <span className="flex-1 truncate">{row.name}</span>
-            <span className="text-muted-foreground tabular">{formatPercent(row.total / sum)}</span>
-            <span className="w-24 text-right font-medium tabular">
-              {compactMoney(row.total, currency)}
-            </span>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }

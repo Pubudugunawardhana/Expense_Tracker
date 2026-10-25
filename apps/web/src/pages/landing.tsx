@@ -217,9 +217,11 @@ export function LandingPage() {
                 </Link>
               </Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              No credit card. The demo resets every night.
-            </p>
+            {!signedIn && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                No credit card. The demo resets every night.
+              </p>
+            )}
           </motion.div>
 
           <motion.div
